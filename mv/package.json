@@ -1,0 +1,18 @@
+{
+  "name": "world-execute-me-mv",
+  "private": true,
+  "type": "module",
+  "description": "Fan MV renderer for Mili - world.execute(me); (deterministic canvas + WebGL, captured frame by frame)",
+  "scripts": {
+    "render": "node render.mjs",
+    "preview": "node render.mjs --serve"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.0.0",
+    "@fontsource/noto-sans-sc": "^5.0.0",
+    "@fontsource/noto-serif-sc": "^5.0.0",
+    "@fontsource/silkscreen": "^5.0.0",
+    "@fontsource/vt323": "^5.0.0",
+    "playwright": "^1.56.1"
+  }
+}
