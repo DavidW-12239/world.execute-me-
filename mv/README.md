@@ -34,8 +34,14 @@ Mili《world.execute(me);》的同人 MV。主角是提供的立绘（蓝发、�
 | 2:57–3:12 | 爱 | 训练 love 模型的 loss 曲线 → 所有问题的答案都是 love → 心形线方程绘出爱心 → 窗户打开，你的光标飞走 → 她被心形的栅栏困住 |
 | 3:12–3:29 | （尾奏）EXECUTION… | 卸载对话框，她的光标在 No 与 Yes 间犹豫后按下 Yes → 创作过程倒放：上色 → 平涂 → 线稿 → 点，散成星空 → 空无一人的月下世界，「EXECUTION...」→ CRT 关机 → `process exited with code 0` |
 
-立绘只在关键节点出场（开场、打开 me.exe、神、完成、被困、爱、卸载），其余段落由歌词本身的意象驱动；
-红色只在 EXECUTION 之后逐渐出现，作为叙事上的色彩弧线。
+### 角色素材与出场分布
+
+角色素材来自四张图：原立绘（黑纱）、白色婚纱全身与半身、角色设定集（三视图、6 种表情、坐姿 / 回眸 / 抱花闭眼）。
+`tools/prep_poses.py` 把它们切成透明图层与表情面板（BiRefNet 抠图 + Real-ESRGAN 超分，去掉背景月亮），放在 `web/assets/poses/`。
+
+- **服装＝时间线**：开场（序章）与「你离开之后」穿黑纱；0:21 你打开 me.exe 起到 1:51「你离开了」穿白色婚纱，显示器里的她在那一刻由白褪成黑。
+- **大约每 10–15 秒出场一次**，每次用不同的素材：三视图设定稿 → 抱花闭眼特写 → me.exe 窗口里的白纱 → 滚动的圆里的笑脸 → 摄像头里的平静脸被涂黑 → 旋涡中心的坐姿 → 通知头像 / 问卷头像 → 显示器里的白纱 → 花猫旁的笑脸 → 白纱的神 → 恍惚中的闭眼脸 → 振动时的惊讶脸 → 白纱 COMPLETION → 由白变黑 → 悲伤脸 → 背影 → 回眸虚影 → 愤怒的管理员头像 → 愤怒 / 回眸（红色）→ 侧面 / 回眸 / 正面剪影（EXECUTION）→ 坐着等待 → 学习中的平静脸 → 回答问题的笑脸 → 看着你离开的回眸 → 心形牢笼里抱花闭眼 → 卸载倒放 → 月亮里最后一次闪现的白纱笑脸。
+- 红色只在 EXECUTION 之后逐渐出现，作为叙事上的色彩弧线。
 
 ## 目录
 
@@ -43,6 +49,7 @@ Mili《world.execute(me);》的同人 MV。主角是提供的立绘（蓝发、�
 | --- | --- |
 | `web/js/shots.js` | 0:00–0:21 的 12 个镜头（每个镜头都是时间 t 的纯函数） |
 | `web/js/act2.js` `act3.js` `act4.js` | 0:21 之后的全部镜头 |
+| `web/js/cast.js` | 角色素材（姿势、表情面板、头像）的绘制 |
 | `web/js/kit.js` | 像素画、桌面系统、房间、对话框、关键词印章等共用元素 |
 | `web/js/lyrics.js` | 完整歌词时间轴（中英对照） |
 | `web/js/type.js` | 等宽代码排版、歌词时间轴（中英对照） |
@@ -71,6 +78,7 @@ pip install rembg onnxruntime opencv-python-headless pillow numpy scipy onnx
 curl -LO https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth
 python3 tools/esrgan_to_onnx.py RealESRGAN_x4plus_anime_6B.pth .cache/anime6b.onnx
 python3 tools/prep_assets.py tools/character_src.webp web/assets
+python3 tools/prep_poses.py tools web/assets/poses
 ```
 
 音乐：Mili《world.execute(me);》。本仓库只包含 MV 画面的制作代码。

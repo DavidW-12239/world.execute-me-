@@ -7,6 +7,7 @@ import {
   stamp, zhTag, path, click, roomScene, shatter,
 } from './kit.js';
 import { LYRICS } from './lyrics.js';
+import { pose, face, avatar } from './cast.js';
 
 const zhOf = (en, after) => LYRICS.find(l => l.en === en && l.t0 > after).zh;
 const blueprint = (ctx, bg = '#0a0f3c') => { ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); bgGrid(ctx, 30, '#121a55', 150, '#1d2672'); };
@@ -51,9 +52,10 @@ function shotHunt(ctx, lt, t, fx) {
 function shotTaskman(ctx, lt, t, fx) {
   const cut = Math.floor((t - 140.51) / 0.923) % 2 === 1 && t < 147.3;
   if (cut) {
-    const A = getA(), k = 4.6 + (t - 140.5) * 0.05;
+    const n = Math.floor((t - 140.51) / 0.923), z = 1 + (t - 140.5) * 0.02;
     ctx.fillStyle = '#12040c'; ctx.fillRect(0, 0, W, H);
-    ctx.drawImage(A.inset, 0, 520, 468, 360, 960 - 190 * k, 520 - 180 * k, 468 * k, 360 * k);
+    if (n % 4 === 1) face(ctx, 'angry', 960 - 330 * z, 520 - 430 * z, 660 * z, 860 * z, { frame: false });   // her anger
+    else pose(ctx, 'pose_back', 900, 1180, 1250 * z);                                                          // a glance back
     ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = RED; ctx.fillRect(0, 0, W, H); ctx.restore();
     scanBars(ctx, 0, 0, W, H, 0.3, 4);
   } else {
@@ -89,7 +91,7 @@ function shotExecution(ctx, lt, t, fx) {
   const fg = bg === C.ink || bg === C.navy ? C.paper : C.ink, acc = bg === RED ? C.ink : RED;
   if (tpl === 0) focusLines(ctx, 960, 540, 160, 380, acc, 11 + i, 0.8);
   if (tpl === 1) stripes(ctx, 0, 0, W, H, 60, bg, death ? '#d8445f' : '#e04a66', lt2 * 400, -0.6);
-  if (tpl === 2) { sticker(ctx, 960, 1080, 0.62, 495, 1490, 8, acc); layer(ctx, tinted(getA().sil, fg, 'sil'), 960, 1080, 0.62, 495, 1490); }
+  if (tpl === 2) pose(ctx, ['view_side', 'pose_back', 'view_front'][Math.floor(i / 4) % 3], 960, 1090, 940, { tint: fg, rim: acc, rimW: 8 });
   if (tpl === 3) { const y = E.inCubic(clamp(lt2 * 4)) * H; ctx.fillStyle = acc; ctx.fillRect(0, y - 10, W, 20); }
   const shift = tpl === 3 ? (lt2 > 0.25 ? 18 : 0) : 0;
   stamp(ctx, 'EXECUTION', t, EXE[i], { size: 230, y: 620 - shift, x: W / 2 - 9 * 138 / 2 - shift, color: fg, shadow: acc, decode: 0.12 });
@@ -159,7 +161,7 @@ function shotWait(ctx, lt, t, fx) {
     c.fillStyle = '#0b0e2e'; c.fillRect(S.x, S.y, S.w, S.h);
     mono(c, 'waiting for user', S.x + 120, S.y + 150, 30, { color: C.ice, weight: 700 });
     c.save(); c.translate(S.x + 80, S.y + 140); c.rotate(t * 8); for (let i = 0; i < 8; i++) { c.rotate(Math.PI / 4); c.fillStyle = `rgba(169,198,255,${(i + 1) / 8})`; c.fillRect(8, -3, 14, 6); } c.restore();
-    blit(c, sprite(), S.x + S.w / 2, S.y + S.h - 60, 1.4, { center: true });
+    pose(c, 'pose_sit', S.x + S.w - 90, S.y + S.h + 6, S.h * 0.78);   // sitting, waiting
   } });
   if (t > T0) {
     ctx.fillStyle = 'rgba(18,4,12,0.6)'; ctx.fillRect(0, 0, W, H);
@@ -196,6 +198,7 @@ function shotStudy(ctx, lt, t, fx) {
   blueprint(ctx, '#0b0d2c');
   const T0 = 180.25, k = inv(177.3, 180.2, t);
   appWindow(ctx, 200, 120, 1500, 700, 'train_love.py', (c, b) => {
+    face(c, 'calm', b.x + b.w - 330, b.y + 330, 170, 220, { frame: C.dim });
     const x0 = b.x + 80, y0 = b.y + b.h - 80, w = b.w - 460, h = b.h - 160;
     c.strokeStyle = C.dim; c.lineWidth = 2; c.beginPath(); c.moveTo(x0, b.y + 60); c.lineTo(x0, y0); c.lineTo(x0 + w, y0); c.stroke();
     c.strokeStyle = C.ice; c.lineWidth = 4; c.beginPath();
@@ -213,6 +216,7 @@ function shotQuestion(ctx, lt, t, fx) {
   ctx.fillStyle = '#05060f'; ctx.fillRect(0, 0, W, H);
   const T0 = 183.75;
   if (t < T0) {
+    face(ctx, 'smile', 1320, 150, 420, 560, { frame: C.lilac, alpha: clamp((t - 181.3) * 2) });
     QS.forEach((q, i) => { const ti = 181.1 + i * 0.42; if (t < ti) return; mono(ctx, `> ${q}`, 140, 140 + i * 110, 34, { color: C.mist, count: Math.floor((t - ti) / 0.02) }); if (t > ti + 0.2) mono(ctx, '  love.', 140, 186 + i * 110, 34, { color: C.lilac, weight: 800 }); });
   } else {
     for (let j = 0; j < 22; j++) mono(ctx, 'LOVE '.repeat(20), -((j * 37 + (t - T0) * 300) % 200), 50 + j * 48, 40, { color: j % 2 ? C.violet : C.lilac, weight: 800 });
@@ -237,7 +241,7 @@ function shotAlgebra(ctx, lt, t, fx) {
 }
 // "Though you are free": the window opens; your pointer flies out into the sky.
 function shotFree(ctx, lt, t, fx) {
-  roomScene(ctx, t, { day: 0.35, windowOpen: true, glow: 0.2, mug: false, screen: (c, S) => { c.save(); c.translate(S.x, S.y); c.scale(S.w / W, S.h / H); keyVisual(c, 17.5, { z: 1.2, x: 0, y: 160, s: 0.66, rot: 0 }); c.restore(); } });
+  roomScene(ctx, t, { day: 0.35, windowOpen: true, glow: 0.2, mug: false, screen: (c, S) => { c.fillStyle = '#0b0e2e'; c.fillRect(S.x, S.y, S.w, S.h); moon(c, S.x + S.w * 0.62, S.y + S.h * 0.35, 90, 0.7); pose(c, 'pose_back', S.x + S.w * 0.55, S.y + S.h + 30, S.h * 1.05); } });   // she watches you go
   const k = E.inOutCubic(inv(188.3, 189.7, t));
   const x = lerp(1100, 360, k), y = lerp(420, 230, k) - Math.sin(k * Math.PI) * 60, s = lerp(9, 2, k);
   arrow(ctx, x, y, s);
@@ -246,7 +250,9 @@ function shotFree(ctx, lt, t, fx) {
 // "I am trapped / Trapped in LO-O-OVE": she stands inside a heart drawn as bars.
 function shotLoveCage(ctx, lt, t, fx) {
   const T0 = 191.25;
-  keyVisual(ctx, 18 + (t - 189.75) * 0.3, { z: 1.0 + (t - 189.75) * 0.03, x: 0, y: 0, s: 0.66, rot: 0 });
+  { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0c0f33'); g.addColorStop(1, C.ink); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    stars(ctx, t, 17, 110, 0.9, 900); moon(ctx, 975, 400, 300, 0.8); petals(ctx, t, 50, 5, 0, 0.9, 0.9);
+    pose(ctx, 'pose_hug', 1000, 1150, 1000 + (t - 189.75) * 30, { glow: C.ice }); }   // eyes closed, holding the bouquet
   const cx = 975, cy = 470, s = 29, p = E.inOutCubic(inv(189.8, 190.9, t));
   ctx.save(); heartPath(ctx, cx, cy, s, p); ctx.strokeStyle = C.lilac; ctx.lineWidth = 10; ctx.stroke();
   if (p >= 1) { heartPath(ctx, cx, cy, s); ctx.clip(); ctx.fillStyle = C.lilac; for (let i = 0; i < 14; i++) ctx.fillRect(cx - 16 * s + i * 34 * s / 14, cy - 20 * s, 6, 40 * s * E.outCubic(inv(190.9 + i * 0.01, 191.2 + i * 0.01, t))); }
@@ -308,6 +314,8 @@ function shotEnd(ctx, lt, t, fx) {
   const scene = c => {
     c.fillStyle = C.ink; c.fillRect(0, 0, W, H);
     stars(c, t, 3, 160, 0.9, 700); moon(c, 960, 360, 300, 0.95); floorGrid(c, t * 0.3, 720, 1, 0.9);
+    const mem = Math.sin(Math.PI * clamp(inv(203.3, 205.7, t))) * 0.75;           // one last memory: her smile, in white
+    if (mem > 0.01) { c.save(); c.beginPath(); c.arc(960, 360, 296, 0, 7); c.clip(); c.fillStyle = `rgba(20,24,70,${mem})`; c.fillRect(600, 0, 720, 720); pose(c, 'white_up', 960, 700, 640, { alpha: mem }); c.restore(); }
     if (t > 205.9) {
       const s = 'EXECUTION...', n = Math.min(s.length, Math.floor((t - 205.9) / 0.1) + 1);
       mono(c, s, 960 - s.length * 0.6 * 110 / 2, 900, 110, { color: C.paper, weight: 300, count: n });

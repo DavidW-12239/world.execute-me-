@@ -30,7 +30,10 @@ export function blit(ctx, img, x, y, s, o = {}) {
 }
 
 // Her, as a 44×66 desktop sprite.
-export const sprite = () => crisp('sprite', 44, 66, x => x.drawImage(getA().char, 80, 0, 880, 1536, 0, 0, 44, 66));
+// Her, as a 44×66 desktop sprite — in white while you are here, in black once you've gone.
+export const sprite = (v = 'black') => v === 'white'
+  ? crisp('spriteW', 44, 66, x => x.drawImage(getA().poses.white_full.img, 180, 30, 1260, 1890, 0, 0, 44, 66))
+  : crisp('sprite', 44, 66, x => x.drawImage(getA().char, 80, 0, 880, 1536, 0, 0, 44, 66));
 
 // ---------------------------------------------------------------------------
 // Program icons (24×24 before pixel snapping)
@@ -48,15 +51,15 @@ export const PROGRAMS = [
   { key: 'TROIS', name: 'TROIS.exe', what: 'game' }, { key: 'NE', name: 'NE.exe', what: 'mail' },
   { key: 'FEM', name: 'FEM.exe', what: 'chat' }, { key: 'LIU', name: 'LIU.exe', what: 'paint' },
 ];
-export const icon = key => key === 'ME' ? sprite() : crisp('icon' + key, 24, 24, ICON[key]);
+export const icon = key => key === 'ME' ? sprite() : key === 'MEW' ? sprite('white') : crisp('icon' + key, 24, 24, ICON[key]);
 
 // Desktop icon with label; k = pop-in progress, dead = deleted (collapsed to pixels).
 export function deskIcon(ctx, key, label, x, y, o = {}) {
   const k = o.k ?? 1; if (k <= 0) return;
-  const img = icon(key), s = key === 'ME' ? 2.0 : 3.6, w = img.width * s, h = img.height * s;
+  const img = icon(key), s = key.startsWith('ME') ? 2.0 : 3.6, w = img.width * s, h = img.height * s;
   ctx.save(); ctx.translate(x, y); const sc = E.outBack(clamp(k)); ctx.scale(sc, sc);
   if (o.sel) { ctx.fillStyle = 'rgba(77,94,224,0.45)'; ctx.fillRect(-58, -52, 116, 132); ctx.strokeStyle = C.ice; ctx.setLineDash([4, 4]); ctx.strokeRect(-58, -52, 116, 132); ctx.setLineDash([]); }
-  blit(ctx, img, 0, -8 + (key === 'ME' ? -6 : 0), s, { center: true });
+  blit(ctx, img, 0, -8 + (key.startsWith('ME') ? -6 : 0), s, { center: true });
   ctx.font = '26px VT323'; ctx.textAlign = 'center';
   const tw = ctx.measureText(label).width;
   ctx.fillStyle = o.sel ? C.cobalt : 'rgba(5,5,11,0.55)'; ctx.fillRect(-tw / 2 - 5, 44, tw + 10, 26);

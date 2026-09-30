@@ -7,13 +7,14 @@ import {
   stamp, zhTag, path, click, roomScene,
 } from './kit.js';
 import { LYRICS } from './lyrics.js';
+import { pose, face, avatar } from './cast.js';
 
 const L = en => LYRICS.find(l => l.en === en && l.t0 > 20);
 const zhOf = (en, after = 20) => LYRICS.find(l => l.en === en && l.t0 > after).zh;
 
 // ---------------------------------------------------------------------------
 // Desktop layout shared by several scenes: six programs + me.exe down the right side.
-export const ICONS = [...PROGRAMS.map(p => ({ key: p.key, label: p.name })), { key: 'ME', label: 'me.exe' }];
+export const ICONS = [...PROGRAMS.map(p => ({ key: p.key, label: p.name })), { key: 'MEW', label: 'me.exe' }];
 export const iconPos = i => [1790, 120 + i * 128];
 
 // Little app contents so each program reads at a glance.
@@ -75,7 +76,7 @@ function shotOpenMe(ctx, lt, t, fx) {
     const x = lerp(mx - 60, 0, k), y = lerp(my - 60, 0, k), w = lerp(120, W, k), h = lerp(120, H, k);
     ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
     ctx.translate(x, y); ctx.scale(w / W, h / H);
-    keyVisual(ctx, 15.4 + (t - open) * 0.5, { z: 1, x: 0, y: 0, s: 0.66, rot: 0 });
+    keyVisual(ctx, 15.4 + (t - open) * 0.5, { z: 1, x: 0, y: 0, s: 0.66, rot: 0, fig: 'white' });
     ctx.restore();
     ctx.strokeStyle = C.ice; ctx.lineWidth = 3; ctx.strokeRect(x, y, w, h);
     ctx.fillStyle = C.ice; ctx.fillRect(x, y, w, 30 * (1 - k));
@@ -144,7 +145,8 @@ function shotCircle(ctx, lt, t, fx) {
   if (fill > 0) {
     ctx.fillStyle = C.navy; ctx.globalAlpha = fill; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill();
     ctx.beginPath(); ctx.arc(0, 0, r - 6, 0, 7); ctx.clip();
-    layer(ctx, tinted(getA().sil, C.cobalt, 'sil'), 0, 40, 0.26, 512, 768);
+    ctx.fillStyle = '#c9cadb'; ctx.fillRect(-r, -r, 2 * r, 2 * r);
+    pose(ctx, 'white_up', 0, r + 10, 330);   // her smile, rolling along with the circle
   }
   ctx.restore();
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(ang);
@@ -276,11 +278,11 @@ function shotBlind(ctx, lt, t, fx) {
   const nos = beat(106);                                  // screen dies on the beat
   if (t < nos) {
     // eye close-up from the illustration's inset panel, framed as a camera feed
-    const s = 1 + (t - 47.75) * 0.06;
-    const k = 4.2 * s; ctx.drawImage(A.inset, 0, 520, 468, 360, 960 - 190 * k, 520 - 180 * k, 468 * k, 360 * k);   // eye centred
-    ctx.fillStyle = 'rgba(10,12,40,0.25)'; ctx.fillRect(0, 0, W, H);
-    const bar = E.outExpo(inv(48.1, 48.4, t));
-    ctx.fillStyle = C.ink; ctx.fillRect(0, 420, W * bar, 190); ctx.fillStyle = C.paper; if (bar > 0.9) mono(ctx, '████ vision = null ████', 560, 540, 44, { color: C.paper, weight: 800 });
+    // her face on the camera feed (calm) — then a redaction bar across the eyes
+    const z = 1 + (t - 47.75) * 0.04, fw = 560 * z, fh = 740 * z;
+    face(ctx, 'calm', 960 - fw / 2, 470 - fh / 2, fw, fh, { frame: C.ice });
+    const bar = E.outExpo(inv(48.1, 48.4, t)), by = 470 - fh / 2 + fh * 0.36;
+    ctx.fillStyle = C.ink; ctx.fillRect(960 - fw / 2 - 60, by, (fw + 120) * bar, 120); if (bar > 0.9) mono(ctx, '█ vision = null █', 960 - 17 * 15.6, by + 76, 26, { color: C.paper, weight: 800 });
     mono(ctx, '● REC  vision.cam  1024×1536', 110, 150, 26, { color: C.red, weight: 700 });
     scanBars(ctx, 0, 0, W, H, 0.25, 4);
   } else {
@@ -300,8 +302,12 @@ function shotDizzy(ctx, lt, t, fx) {
   ctx.fillStyle = second ? C.ink : C.ice;
   for (let arm = 0; arm < 2; arm++) { ctx.beginPath(); for (let i = 0; i <= 200; i++) { const a = i * 0.12 + arm * Math.PI, r = i * 7; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } for (let i = 200; i >= 0; i--) { const a = i * 0.12 + arm * Math.PI + 0.9, r = i * 7; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.fill(); }
   ctx.restore();
+  // she spins at the centre of the spiral (the sitting pose, hugging her knees)
+  ctx.save(); ctx.translate(960, 520); ctx.beginPath(); ctx.arc(0, 0, 250, 0, 7); ctx.fillStyle = second ? C.ink : C.navy; ctx.fill(); ctx.clip();
+  ctx.rotate(-dir * t * 2.2); pose(ctx, 'pose_sit', 0, 260, 520); ctx.restore();
+  ctx.strokeStyle = second ? C.paper : C.ice; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(960, 520, 250, 0, 7); ctx.stroke();
   // double-vision text
-  for (const [dx, a] of [[-14, 0.45], [14, 0.45], [0, 1]]) { ctx.globalAlpha = a; mono(ctx, 'so dizzy', 960 - 8 * 57.6 / 2 + dx + Math.sin(t * 9) * 20, 560, 96, { color: second ? C.paper : C.ink, weight: 800 }); }
+  for (const [dx, a] of [[-14, 0.45], [14, 0.45], [0, 1]]) { ctx.globalAlpha = a; mono(ctx, 'so dizzy', 960 - 8 * 57.6 / 2 + dx + Math.sin(t * 9) * 20, 180, 96, { color: second ? C.paper : C.ink, weight: 800 }); }
   ctx.globalAlpha = 1;
   // loading pointer
   ctx.save(); ctx.translate(1500, 820); ctx.rotate(t * 10); for (let i = 0; i < 8; i++) { ctx.rotate(Math.PI / 4); ctx.fillStyle = `rgba(236,235,243,${(i + 1) / 8})`; ctx.fillRect(18, -5, 26, 10); } ctx.restore();
@@ -323,7 +329,7 @@ function shotTravel(ctx, lt, t, fx) {
   }
   // playhead
   ctx.fillStyle = C.red; ctx.fillRect(958, 560, 4, 280); ctx.beginPath(); ctx.moveTo(940, 560); ctx.lineTo(980, 560); ctx.lineTo(960, 590); ctx.fill();
-  blit(ctx, sprite(), 900, 520, 2.2, { center: true }); arrow(ctx, 995, 470, 5);
+  blit(ctx, sprite('white'), 900, 520, 2.2, { center: true }); arrow(ctx, 995, 470, 5);
   // big year counter
   const label = year > 0 ? `${String(year).padStart(4, '0')} A.D.` : `${String(1 - year).padStart(4, '0')} B.C.`;
   mono(ctx, label, 960 - label.length * 0.6 * 170 / 2, 400, 170, { color: year > 0 ? C.paper : C.ice, weight: 800 });
@@ -356,7 +362,7 @@ function shotUnite(ctx, lt, t, fx) {
       ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
     }
     ctx.save(); ctx.translate(960, 520); ctx.rotate(t * 3);
-    blit(ctx, sprite(), 60, 0, 1.6, { center: true }); ctx.rotate(Math.PI); arrow(ctx, 40, -10, 4); ctx.restore();
+    blit(ctx, sprite('white'), 60, 0, 1.6, { center: true }); ctx.rotate(Math.PI); arrow(ctx, 40, -10, 4); ctx.restore();
     mono(ctx, `depth ${String(Math.floor(deep * 64)).padStart(2, '0')}`, 110, 180, 34, { color: C.paper, weight: 800 });
   }
   fx.bloom = 0.6; fx.curve = 0.35; fx.scan = 0.08; fx.aberr = 1.5; fx.flash = 0.35 * pulse(t, [55.25, 57.0, 58.1], 12);
@@ -373,8 +379,9 @@ function shotStim(ctx, lt, t, fx) {
   count = Math.min(count, 90);
   for (let i = 0; i < count; i++) {
     const x = 120 + hash(i * 7) * 1300, y = 80 + hash(i * 13) * 760, k = clamp((t - 59.3 - i * 0.05) * 6);
-    ctx.save(); ctx.globalAlpha = clamp(k); ctx.fillStyle = i % 5 === 0 ? C.ice : '#141848'; ctx.fillRect(x, y, 400, 64); ctx.strokeStyle = C.ice; ctx.lineWidth = 2; ctx.strokeRect(x, y, 400, 64);
-    mono(ctx, NOTES[i % NOTES.length], x + 18, y + 40, 20, { color: i % 5 === 0 ? C.ink : C.paper, weight: 700 }); ctx.restore();
+    ctx.save(); ctx.globalAlpha = clamp(k); ctx.fillStyle = i % 5 === 0 ? C.ice : '#141848'; ctx.fillRect(x, y, 450, 64); ctx.strokeStyle = C.ice; ctx.lineWidth = 2; ctx.strokeRect(x, y, 450, 64);
+    avatar(ctx, ['smile', 'surprised', 'calm'][i % 3], x + 32, y + 32, 24, { lw: 2 });
+    mono(ctx, NOTES[i % NOTES.length], x + 66, y + 40, 20, { color: i % 5 === 0 ? C.ink : C.paper, weight: 700 }); ctx.restore();
   }
   // dopamine meter
   const lv = clamp((t - 59.25) / 2.5) * (0.85 + 0.15 * Math.sin(t * 20));
@@ -392,6 +399,7 @@ function shotSatisfy(ctx, lt, t, fx) {
   const w = 900, h = 420, x = 510, y = 250;
   appWindow(ctx, x, y, w, h, 'me.exe — feedback', (c, b) => {
     mono(c, 'How satisfied are you with me?', b.x + 50, b.y + 80, 34, { color: C.paper, weight: 700 });
+    avatar(c, t > 65.75 ? 'smile' : 'calm', b.x + b.w - 100, b.y + 290, 64);
     const stars = [beat(137), beat(138), beat(139), beat(140), beat(141)];
     stars.forEach((ts, i) => {
       const on = t > ts, sx = b.x + 130 + i * 140, sy = b.y + 200;
@@ -433,7 +441,7 @@ function shotTrapped(ctx, lt, t, fx) {
   const T0 = 72.75;
   wctx.setTransform(1, 0, 0, 1, 0, 0);
   roomScene(wctx, t, { scr: { x: 560, y: 150, w: 800, h: 450 }, steam: 0.6, screen: (c, S) => {
-    c.save(); c.translate(S.x, S.y); c.scale(S.w / W, S.h / H); keyVisual(c, 17.0, { z: 1.25, x: 0, y: 160, s: 0.66, rot: 0 }); c.restore();
+    c.save(); c.translate(S.x, S.y); c.scale(S.w / W, S.h / H); keyVisual(c, 17.0, { z: 1.25, x: 0, y: 160, s: 0.66, rot: 0, fig: 'white' }); c.restore();
     c.fillStyle = C.ink; for (let i = 0; i < 12; i++) c.fillRect(S.x + i * S.w / 11 - 4, S.y, 8, S.h * E.outCubic(inv(70.35 + i * 0.03, 70.9 + i * 0.03, t)));
   } });
   const strange = inv(71.5, 72.7, t);

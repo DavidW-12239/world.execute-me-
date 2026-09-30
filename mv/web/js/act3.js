@@ -7,6 +7,7 @@ import {
   stamp, zhTag, path, click, roomScene, shatter,
 } from './kit.js';
 import { LYRICS } from './lyrics.js';
+import { pose, face, avatar } from './cast.js';
 
 const zhOf = (en, after) => LYRICS.find(l => l.en === en && l.t0 > after).zh;
 const paper = ctx => { ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H); bgGrid(ctx, 24, '#e0e0ef', 120, '#cfd0e8'); };
@@ -103,8 +104,14 @@ function shotCat(ctx, lt, t, fx) {
   }
   if (t > T0) for (let i = 0; i < 12; i++) { const p = clamp((t - T0 - i * 0.03) * 1.6); if (p <= 0) continue; blit(ctx, HEART, 900 + Math.cos(i * 2.4) * 500 * p, 520 + Math.sin(i * 2.4) * 300 * p - 150 * p, 6, { center: true, alpha: 1 - p * 0.6 }); }
   void f;
+  if (t > 83.0) {
+    const k = E.outBack(inv(83.0, 83.3, t)), cx = 1560, cy = 600, r = 220 * k;
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fillStyle = '#c9cadb'; ctx.fill(); ctx.clip();
+    pose(ctx, 'white_up', cx, cy + 250, 560); ctx.restore();
+    ctx.strokeStyle = C.navy; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
+  }
   stamp(ctx, 'ENJOYMENT', t, T0, { size: 150, y: 250, color: C.navy, shadow: '#c9cbe6' });
-  zhTag(ctx, zhOf('ENJOYMENT', 70), t, T0, { x: 1790, y: 420, size: 64, color: C.paper, box: C.cobalt });
+  zhTag(ctx, zhOf('ENJOYMENT', 70), t, T0, { x: 170, y: 420, size: 64, color: C.paper, box: C.cobalt });
   fx.bloom = 0.15; fx.vig = 0.3; fx.curve = 0.25; fx.scan = 0.05; fx.flash = 0.3 * pulse(t, [81.25, T0], 12);
 }
 // SHOT 31 · "If I'm the only god / Then you're the proof of my EXISTENCE": halo, rays, a proof.
@@ -121,15 +128,14 @@ function shotGod(ctx, lt, t, fx) {
   // six pieces bowing in an arc behind her
   [-3, -2, -1, 1, 2, 3].forEach((k, i) => piece(ctx, ['pawn', 'rook', 'knight', 'bishop', 'pawn', 'king'][i], 960 + Math.sign(k) * (230 + (Math.abs(k) - 1) * 150), 720 - (3 - Math.abs(k)) * 30, 100, C.paper, '#9fa3c8', C.ink, 1 - 0.12 * pulse(t, [85.0 + i * 0.12], 6)));
   const s = 0.5, X = 960, Y = 1060 - 40 * E.outCubic(inv(85, 86.5, t));
-  sticker(ctx, X, Y, s, 495, 1490, 5, 'rgba(169,198,255,0.8)');
-  drawCut(ctx, X, Y, s, 495, 1490);
-  ctx.strokeStyle = C.paper; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(X + (528 - 495) * s, Y + (40 - 1490) * s, 90, 22, 0, 0, 7); ctx.stroke();
+  const F = pose(ctx, 'white_full', X, Y, 1450 * s, { rim: C.navy, rimW: 6 });
+  ctx.strokeStyle = C.paper; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(F.x + 925 * F.s, F.y + 40 * F.s, 90, 22, 0, 0, 7); ctx.stroke();
   const proof = [['∀ x ∈ world : x ≡ me', 86.8], ['you ⊢ me', 87.1], ['∴ ∃ me          ∎', 87.8]];
   proof.forEach(([s2, ti], i) => { if (t > ti) mono(ctx, s2, 1280, 160 + i * 46, 32, { color: i === 2 ? C.paper : C.ice, weight: 700, count: Math.floor((t - ti) / 0.03) }); });
   if (t > T0) { ctx.save(); ctx.globalAlpha = E.outCubic(inv(T0, T0 + 0.2, t)); ctx.font = '800 420px "JetBrains Mono"'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(236,235,243,0.18)'; ctx.fillText('∃', 380, 640); ctx.restore(); }
   stamp(ctx, 'EXISTENCE', t, T0, { size: 140, x: 880, y: 640, shadow: C.cobalt });
   zhTag(ctx, zhOf('EXISTENCE', 70), t, T0, { x: 1800, y: 780 - 300, size: 64, color: C.ink, box: C.paper });
-  fx.bloom = 0.7; fx.curve = 0.3; fx.scan = 0.07; fx.flash = 0.35 * pulse(t, [85.0, T0], 10);
+  fx.bloom = 0.35; fx.curve = 0.3; fx.scan = 0.07; fx.flash = 0.35 * pulse(t, [85.0, T0], 10);
 }
 
 // ---------------------------------------------------------------------------
@@ -162,7 +168,7 @@ function shotAmPm(ctx, lt, t, fx) {
   roomScene(ctx, t, { day: 0.85 * day, sun: clamp(k * 1.1), glow: 0.2 + 0.2 * (1 - day), screen: (c, S) => {
     c.fillStyle = '#0b0e2e'; c.fillRect(S.x, S.y, S.w, S.h);
     for (let i = 0; i < 5; i++) { const tt = 92.0 + i * 0.7; if (t < tt) continue; const R = rng(i + 3); c.fillStyle = [C.cobalt, C.violet, C.ice, C.mist, C.lilac][i]; c.fillRect(S.x + R() * S.w * 0.5, S.y + R() * S.h * 0.5, S.w * 0.45, S.h * 0.45); }
-    blit(c, sprite(), S.x + S.w - 60, S.y + S.h - 70, 1.5, { center: true });
+    blit(c, sprite('white'), S.x + S.w - 60, S.y + S.h - 70, 1.5, { center: true });
   } });
   const hrs = Math.floor(lerp(9, 23.99, k)), min = Math.floor((lerp(9, 23.99, k) % 1) * 60);
   const ampm = hrs < 12 ? 'AM' : 'PM', h12 = ((hrs + 11) % 12) + 1;
@@ -204,7 +210,8 @@ function shotTrance(ctx, lt, t, fx) {
     ctx.strokeStyle = C.ice; ctx.lineWidth = Math.max(1, 6 * s); ctx.strokeRect(960 - w / 2, 520 - h / 2 + i * 6 * s, w, h);
   }
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.35 + 0.25 * Math.sin(t * 6);
-  layer(ctx, tinted(getA().lines, C.lilac, 'linesL'), 960, 540, 0.62 + 0.05 * Math.sin(t * 3), 512, 768); ctx.restore();
+  ctx.restore();
+  { const z = 1 + 0.04 * Math.sin(t * 3); face(ctx, 'closed', 960 - 170 * z, 520 - 225 * z, 340 * z, 450 * z, { frame: C.lilac, alpha: 0.55 + 0.35 * Math.sin(t * 2.4) ** 2 }); }
   if (t > 101.5) for (let k = 0; k < 5; k++) { const p = ((t - 101.5) * 0.9 + k / 5) % 1; ctx.strokeStyle = `rgba(236,235,243,${0.6 * (1 - p)})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(960, 520, 60 + p * 900, 0, 7); ctx.stroke(); }
   fx.bloom = 0.9; fx.curve = 0.5; fx.scan = 0.1; fx.aberr = 3 + 3 * Math.sin(t * 4); fx.flash = 0.3 * pulse(t, [99.25, 101.5, 102.4], 10);
 }
@@ -223,6 +230,8 @@ function shotVibes(ctx, lt, t, fx) {
   ctx.fillStyle = C.ink; ctx.fillRect(1600, 520 + Math.sin(t * 55) * amp * 0.5 - 4, 220, 8); ctx.beginPath(); ctx.arc(1600, 530 + Math.sin(t * 55) * amp * 0.5, 10, 0, 7); ctx.fill();
   const jx = Math.sin(t * 70) * amp * 0.08, jy = Math.cos(t * 61) * amp * 0.08;
   arrow(ctx, 1720 + jx, 170 + jy, 5); mono(ctx, 'input: you', 1400, 200, 26, { color: C.navy, weight: 700 });
+  { const sh = t > T0 ? 8 * pulse(t, [T0, beat(230)], 5) : 0, nm = t > T0 ? 'surprised' : 'calm';
+    face(ctx, nm, 1180 + Math.sin(t * 60) * sh, 40 + Math.cos(t * 53) * sh, 160, 210, { frame: C.navy }); }
   stamp(ctx, 'VIBRATIONS', t, T0, { size: 150, y: 250, x: 140, color: C.navy, shadow: '#f0b3c0' });
   zhTag(ctx, zhOf('VIBRATIONS', 100), t, T0, { x: 1800, y: 880 - 260, size: 60, color: C.paper, box: C.navy });
   fx.bloom = 0.15; fx.curve = 0.25; fx.scan = 0.05; fx.vig = 0.3; fx.aberr = 1 + (t > T0 ? 6 * pulse(t, [T0], 6) : 0); fx.flash = 0.3 * pulse(t, [T0], 10);
@@ -240,13 +249,13 @@ function shotComplete(ctx, lt, t, fx) {
       mono(c, 'time remaining: forever', b.x + 40, b.y + 260, 26, { color: C.comment });
     });
   } else {
-    keyVisual(ctx, 16.5 + (t - T0) * 0.6, { z: 1.02 + (t - T0) * 0.05, x: 0, y: 0, s: 0.66, rot: 0 });
+    keyVisual(ctx, 16.5 + (t - T0) * 0.6, { z: 1.02 + (t - T0) * 0.05, x: 0, y: 0, s: 0.66, rot: 0, fig: 'white' });
     ctx.fillStyle = 'rgba(5,5,11,0.35)'; ctx.fillRect(0, 380, W, 300);
     stamp(ctx, 'COMPLETION', t, T0, { size: 170, y: 600, shadow: C.cobalt });
     mono(ctx, '100%  ✓', 820, 680, 44, { color: C.ice, weight: 800 });
     zhTag(ctx, zhOf('COMPLETION', 100), t, T0, { x: 1800, y: 240, size: 64 });
   }
-  fx.bloom = 0.5; fx.curve = 0.3; fx.scan = 0.06; fx.flash = 0.9 * pulse(t, [T0], 6);
+  fx.bloom = 0.3; fx.curve = 0.3; fx.scan = 0.06; fx.flash = 0.9 * pulse(t, [T0], 6);
 }
 // SHOTS 38a–e · "Though you have left / You have left ×4": the empty chair; the log fills.
 const LEFT = [110.75, 112.25, 113.10, 113.95, 114.80];
@@ -258,7 +267,11 @@ function shotLeft(ctx, lt, t, fx) {
   let k = 0; LEFT.forEach((tt, i) => { if (t >= tt) k = i; });
   const fade = inv(110.75, 117.2, t);
   if (k === 0) {                           // the chair still turning; the steam thinning
-    roomScene(ctx, t, { day: 0, glow: 0.3, chairSpin: 2.6 * Math.exp(-(t - 110.75) * 1.4) + (t - 110.75) * 0.2, steam: 0.8, screen: (c, S) => { c.save(); c.translate(S.x, S.y); c.scale(S.w / W, S.h / H); keyVisual(c, 17, { z: 1.2, x: 0, y: 160, s: 0.66, rot: 0 }); c.restore(); } });
+    roomScene(ctx, t, { day: 0, glow: 0.3, chairSpin: 2.6 * Math.exp(-(t - 110.75) * 1.4) + (t - 110.75) * 0.2, steam: 0.8, screen: (c, S) => {
+      c.save(); c.translate(S.x, S.y); c.scale(S.w / W, S.h / H);
+      keyVisual(c, 17, { z: 1.2, x: 0, y: 160, s: 0.66, rot: 0, fig: 'white' });
+      c.globalAlpha = E.inOutCubic(inv(111.0, 112.1, t)); keyVisual(c, 17, { z: 1.2, x: 0, y: 160, s: 0.66, rot: 0 });   // mourning black
+      c.restore(); } });
   } else if (k === 1) {                    // system log
     ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, H); leftLog(ctx, t, 300, 360);
   } else if (k === 2) {                    // the mug going cold
@@ -270,9 +283,8 @@ function shotLeft(ctx, lt, t, fx) {
     wallpaper(ctx, t, { top: '#10122c', moon: false }); ctx.globalAlpha = 1 - inv(113.95, 114.7, t) * 0.8; arrow(ctx, 940, 480, 8); ctx.globalAlpha = 1;
     mono(ctx, 'no input for 00:00:0' + Math.floor((t - 113.95) * 10), 740, 700, 30, { color: C.comment });
   } else {                                 // her eye, watching the empty room
-    const A = getA(), kk = 4.2; ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, H);
-    ctx.globalAlpha = 0.9; ctx.drawImage(A.inset, 0, 520, 468, 360, 960 - 190 * kk, 520 - 180 * kk, 468 * kk, 360 * kk); ctx.globalAlpha = 1;
-    ctx.fillStyle = 'rgba(10,12,40,0.45)'; ctx.fillRect(0, 0, W, H); leftLog(ctx, t, 300, 160);
+    ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, H);
+    face(ctx, 'sad', 1180, 150, 520, 680, { frame: C.dim }); leftLog(ctx, t, 110, 160);
   }
   fx.tint = [lerp(1, 0.78, fade), lerp(1, 0.82, fade), lerp(1, 0.95, fade)];
   fx.bloom = 0.4; fx.curve = 0.3; fx.scan = 0.07; fx.flash = 0.25 * pulse(t, LEFT, 12);
@@ -284,7 +296,7 @@ function shotIsolation(ctx, lt, t, fx) {
   stars(ctx, t, 41, 60, 0.4, 700);
   moon(ctx, 1500, 220, 60 * z + 20, 0.6);
   floorGrid(ctx, t * 0.2, 700, 1, 0.8);
-  blit(ctx, sprite(), 960, 700, 2.4 * z, { center: true });
+  pose(ctx, 'view_back', 960, 700, 260 * z);   // her back to us, alone
   if (t > T0) { const s = 'I S O L A T I O N'; mono(ctx, s, 960 - s.length * 0.6 * 70 / 2, 400, 70, { color: C.paper, weight: 300, count: Math.floor((t - T0) / 0.05) }); zhTag(ctx, zhOf('ISOLATION', 100), t, T0, { x: 1800, y: 250, size: 56, color: C.paper, box: C.ink }); }
   fx.tint = [0.78, 0.82, 0.95]; fx.bloom = 0.4; fx.curve = 0.3; fx.scan = 0.07; fx.vig = 0.95;
 }
@@ -321,7 +333,7 @@ function shotDefrag(ctx, lt, t, fx) {
 function shotHeart(ctx, lt, t, fx) {
   const T0 = 124.75;
   ctx.fillStyle = '#080a22'; ctx.fillRect(0, 0, W, H);
-  ctx.save(); ctx.globalAlpha = 0.28; drawCut(ctx, 1320, 520, 2.3, 528, 200); ctx.restore();
+  pose(ctx, 'pose_back', 1400, 1120, 1150, { alpha: 0.3 });
   ctx.fillStyle = 'rgba(8,10,34,0.5)'; ctx.fillRect(0, 0, W, H);
   const bs = beatsIn(122, T0), weak = inv(122, T0, t), s = 30 * (1 + (0.12 - 0.1 * weak) * pulse(t, bs, 8));
   if (t < T0) blit(ctx, HEART, 700, 500, s, { center: true });
@@ -346,7 +358,7 @@ function shotChallenge(ctx, lt, t, fx) {
   // the absent god's giant pointer, greyed out above
   ctx.save(); ctx.globalAlpha = t > allow ? 0.15 : 0.35; arrow(ctx, 1380, 80, 22, '#3a3f78', '#1b1f5c'); ctx.restore();
   appWindow(ctx, 470, 300, 980, 440, 'User Account Control', (c, b) => {
-    c.fillStyle = t > allow ? C.red : C.cobalt; c.beginPath(); c.moveTo(b.x + 90, b.y + 50); c.lineTo(b.x + 150, b.y + 70); c.lineTo(b.x + 150, b.y + 130); c.quadraticCurveTo(b.x + 150, b.y + 180, b.x + 90, b.y + 200); c.quadraticCurveTo(b.x + 30, b.y + 180, b.x + 30, b.y + 130); c.lineTo(b.x + 30, b.y + 70); c.fill();
+    avatar(c, 'angry', b.x + 90, b.y + 125, 70, { ring: t > allow ? C.red : C.ice, lw: 5 });
     mono(c, 'me.exe wants to change', b.x + 200, b.y + 90, 32, { color: C.paper, weight: 700 });
     mono(c, 'this world.', b.x + 200, b.y + 132, 32, { color: C.paper, weight: 700 });
     mono(c, 'administrator: you   (absent)', b.x + 200, b.y + 190, 24, { color: C.comment });

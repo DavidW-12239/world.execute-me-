@@ -4,6 +4,7 @@ import {
   tinted, sparkle, focusLines, halftone, stripes, windowFrame, roundRect,
 } from './lib.js';
 import { mono, cursor, lyricEditor, LYRICS } from './type.js';
+import { pose } from './cast.js';
 
 let A = null;
 export const setAssets = a => { A = a; };
@@ -261,28 +262,36 @@ function shotBoot(ctx, lt, t, fx) {
 
 // SHOT 2 · "Remember to put on": design-sheet equipment checklist.
 const EQUIP = [
-  { t: 1.62, name: 'CHOKER', ext: '.obj', zh: '颈环', at: [515, 243] },
-  { t: 1.85, name: 'VEIL', ext: '.obj', zh: '黑纱', at: [318, 305] },
-  { t: 2.08, name: 'GLOVES', ext: '.obj', zh: '手套', at: [432, 455] },
-  { t: 2.31, name: 'BOUQUET', ext: '.obj', zh: '捧花 ×6', at: [470, 560] },
+  { t: 1.62, name: 'CHOKER', ext: '.obj', zh: '颈环', at: [400, 222] },
+  { t: 1.85, name: 'VEIL', ext: '.obj', zh: '黑纱', at: [120, 640] },
+  { t: 2.08, name: 'GLOVES', ext: '.obj', zh: '手套', at: [300, 560] },
+  { t: 2.31, name: 'BOUQUET', ext: '.obj', zh: '捧花 ×6', at: [400, 690] },
   { t: 2.54, name: 'PROTECTION', ext: '.dll', zh: '绝缘护体', at: null },
 ];
 function shotEquip(ctx, lt, t, fx) {
   ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H);
   bgGrid(ctx, 24, '#e0e0ef', 120, '#cfd0e8', -lt * 20, 0);
-  ctx.fillStyle = '#e1e2f1'; ctx.font = '900 360px "Noto Serif SC"'; ctx.textAlign = 'center';
-  ctx.fillText('装', 1760, 400); ctx.fillText('备', 1760, 780);
+
   // header
   mono(ctx, 'CHARACTER SHEET', 110, 132, 30, { color: C.navy, weight: 800 });
   mono(ctx, 'me.obj  /  rev.01  /  EQUIPMENT', 110, 172, 20, { color: '#6d72b8', weight: 500 });
   ctx.fillStyle = C.navy; for (let i = 0; i < 38; i++) if (hash(i * 3) > 0.35) ctx.fillRect(560 + i * 7, 108, hash(i) > 0.5 ? 4 : 2, 30);
   ctx.fillRect(110, 190, 700, 3);
 
-  const s = lerp(0.93, 0.99, E.inOutCubic(inv(0, 1.4, lt))), X = 1330, Y = 560, SX = 515, SY = 420;
+  // three views, as on the design sheet: front (big), side, back — each slides in on its own beat
   const bob = Math.sin(onTwos(lt) * 5) * 3;
-  layer(ctx, tinted(A.sil, '#c4c6e4', 'sil'), X + 22, Y + 16 + bob, s, SX, SY);
-  drawCut(ctx, X, Y + bob, s, SX, SY);
-  const P = toScreen(X, Y + bob, s, SX, SY);
+  const views = [['view_front', 1060, 960, 1.56], ['view_side', 1470, 800, 1.85], ['view_back', 1760, 800, 2.08]];
+  let F = null;
+  for (const [n, x, h, t0] of views) {
+    const k = E.outCubic(inv(t0, t0 + 0.2, t)); if (k <= 0) continue;
+    ctx.save(); ctx.globalAlpha = k;
+    const r = pose(ctx, n, x + (1 - k) * 60, 1050 + (n === 'view_front' ? bob : 0), h, { rim: '#c4c6e4', rimW: 5 });
+    if (n === 'view_front') F = r;
+    ctx.fillStyle = C.navy; ctx.fillRect(x - 70, 1050 + 8, 140, 2);
+    mono(ctx, n.slice(5).toUpperCase(), x - 45, 1050 - h - 16, 18, { color: '#6d72b8', weight: 700 });
+    ctx.restore();
+  }
+  const P = (px, py) => F ? [F.x + px * F.s, F.y + py * F.s] : [1060, 540];
   // bracket around the figure for PROTECTION (pending)
   EQUIP.forEach((q, i) => {
     if (t < q.t) return;
@@ -312,7 +321,7 @@ function shotEquip(ctx, lt, t, fx) {
     }
   });
   if (t > 2.54) {                       // dashed bracket: protection not yet applied
-    const [x0, y0] = P(150, 12), [x1, y1] = P(1010, 1100);
+    const [x0, y0] = P(-10, 0), [x1, y1] = P(800, 1700);
     ctx.save(); ctx.setLineDash([14, 10]); ctx.lineDashOffset = -t * 60; ctx.strokeStyle = C.violet; ctx.lineWidth = 3;
     ctx.strokeRect(x0, y0, x1 - x0, y1 - y0); ctx.restore();
   }
@@ -848,16 +857,19 @@ function keyVisual(ctx, t, cam) {
   const s = cam.s, X = 960, Y = 1045, SX = 495, SY = 1490;
   const P = toScreen(X, Y, s, SX, SY);
   const [mx, my] = P(515, 245);
-  moon(ctx, mx - cam.x * 0.4, my - cam.y * 0.4 + lerp(40, 10, E.outCubic(inv(14.98, 17, t))), 285 * s / 0.66);
+  moon(ctx, mx - cam.x * 0.4, my - cam.y * 0.4 + lerp(40, 10, E.outCubic(inv(14.98, 17, t))), 285 * s / 0.66, cam.fig === 'white' ? 0.6 : 1);
   // floor
   const hz = 960;
   ctx.fillStyle = '#0a0c26'; ctx.fillRect(-200, hz, W + 400, H - hz + 200);
   for (let i = -8; i < 9; i++) { ctx.fillStyle = i % 2 ? 'rgba(77,94,224,0.18)' : 'rgba(236,235,243,0.06)'; ctx.beginPath(); ctx.moveTo(W / 2 + i * 40, hz); ctx.lineTo(W / 2 + (i + 1) * 40, hz); ctx.lineTo(W / 2 + (i + 1) * 360, H + 200); ctx.lineTo(W / 2 + i * 360, H + 200); ctx.fill(); }
   petals(ctx, t, 60, 5, 0, 0.9, 0.9);
   // rim light + figure + reflection
-  ctx.save(); ctx.globalAlpha = 0.7; layer(ctx, tinted(A.sil, C.ice, 'sil'), X - 5, Y - 4, s, SX, SY); ctx.restore();
-  drawCut(ctx, X, Y, s, SX, SY);
-  ctx.save(); ctx.globalAlpha = 0.2; ctx.translate(0, 2 * Y); ctx.scale(1, -1); ctx.beginPath(); ctx.rect(-200, Y - 300, W + 400, 300); ctx.clip(); drawCut(ctx, X, Y, s, SX, SY); ctx.restore();
+  if (cam.fig === 'white') pose(ctx, 'white_full', X, Y, 1450 * s, { rim: C.navy, rimW: 7, reflect: 0.2 });   // dark outline keeps white on the moon
+  else {
+    ctx.save(); ctx.globalAlpha = 0.7; layer(ctx, tinted(A.sil, C.ice, 'sil'), X - 5, Y - 4, s, SX, SY); ctx.restore();
+    drawCut(ctx, X, Y, s, SX, SY);
+    ctx.save(); ctx.globalAlpha = 0.2; ctx.translate(0, 2 * Y); ctx.scale(1, -1); ctx.beginPath(); ctx.rect(-200, Y - 300, W + 400, 300); ctx.clip(); drawCut(ctx, X, Y, s, SX, SY); ctx.restore();
+  }
   petals(ctx, t, 60, 5, 0.9, 1.4, 1);
   ctx.restore();
   // the illustration's cross and bars, redrawn as screen-space UI lines
@@ -907,11 +919,10 @@ function shotTitle(ctx, lt, t, fx) {
     const k = inv(cut1, cut2, t);
     const g = ctx.createLinearGradient(0, 0, W, 0); g.addColorStop(0, '#1a1f6a'); g.addColorStop(1, '#070818');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    const s = lerp(2.25, 2.45, E.inOutCubic(k)), X = 1040, Y = lerp(560, 530, k), SX = 528, SY = 190;
-    moon(ctx, X + (515 - SX) * s, Y + (245 - SY) * s, 258 * s, 0.72);   // dimmer: the face sits right on the disc
+    const hh = lerp(1180, 1260, E.inOutCubic(k)), X = 1080, Y = 1120 + lerp(0, -20, k);
+    moon(ctx, X - 150, 360, 330, 0.72);
     petals(ctx, t, 30, 9, 0, 0.8, 0.7);
-    ctx.save(); ctx.globalAlpha = 0.8; layer(ctx, tinted(A.sil, C.ice, 'sil'), X - 8, Y - 5, s, SX, SY); ctx.restore();
-    drawCut(ctx, X, Y, s, SX, SY);
+    pose(ctx, 'pose_hug', X, Y, hh, { glow: C.ice });
     softPetals(ctx, t, 26, 13, 1.1, 2, 1);
     mono(ctx, 'while (you.away) {', 110, 880, 30, { color: C.paper, weight: 700, count: Math.floor((t - cut1) / 0.03) });
     mono(ctx, '    me.wait();', 110, 924, 30, { color: C.ice, weight: 400, count: Math.floor((t - cut1 - 0.5) / 0.03) });

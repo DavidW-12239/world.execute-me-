@@ -2,6 +2,7 @@
 import { W, H, C, FPS, BEAT, B0, canvas, clamp } from './lib.js';
 import { lyricEditor, LYRICS, lyricAt, mono } from './type.js';
 import { SHOTS as DEMO, setAssets } from './shots.js';
+import { setPoses } from './cast.js';
 import { SHOTS2 } from './act2.js';
 import { SHOTS3 } from './act3.js';
 import { SHOTS4 } from './act4.js';
@@ -25,7 +26,11 @@ async function load() {
   ].map(f => document.fonts.load(f, 'ABCabc012✓▸●')));
   await Promise.all(['400 40px "Noto Sans SC"', '500 40px "Noto Sans SC"', '700 40px "Noto Sans SC"', '900 40px "Noto Serif SC"'].map(f => document.fonts.load(f, zh)));
   await document.fonts.ready;
-  return { meta, char, full, sil, lines, upper, inset, flats };
+  const pm = await (await fetch('assets/poses/poses.json')).json();
+  const poses = {};
+  await Promise.all(Object.entries(pm).map(async ([k, m]) => { poses[k] = { meta: m, img: await img(`assets/poses/${k}.${k.endsWith('plate') ? 'jpg' : 'png'}`) }; }));
+  setPoses(poses);
+  return { meta, char, full, sil, lines, upper, inset, flats, poses };
 }
 
 function hud(ctx, t, shot) {
