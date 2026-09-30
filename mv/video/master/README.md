@@ -1,4 +1,4 @@
-# 1080p master (341 MB) in 13 parts
+# 1080p master in parts
 
-Joined in order, part00…part12 give `world_execute_me_MV_1080p.mp4`:
-340,920,267 bytes, SHA-256 `44c94bc658e6c98ae34711ee74c0c3a92361eb20c1d24271090fc2068c6d6fd5`.
+Joined in order, the parts give `world_execute_me_MV_1080p.mp4`:
+342,355,598 bytes, SHA-256 `829ec8cf0f92396bed89509862cd06543d4fbb7996f07c1aa17e1ba7210e0aa6`.
