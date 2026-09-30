@@ -89,10 +89,14 @@ function shotExecution(ctx, lt, t, fx) {
   const bg = death ? (i % 2 ? RED : C.ink) : [C.ink, RED, C.paper, C.navy][tpl];
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
   const fg = bg === C.ink || bg === C.navy ? C.paper : C.ink, acc = bg === RED ? C.ink : RED;
-  if (tpl === 0) focusLines(ctx, 960, 540, 160, 380, acc, 11 + i, 0.8);
-  if (tpl === 1) stripes(ctx, 0, 0, W, H, 60, bg, death ? '#d8445f' : '#e04a66', lt2 * 400, -0.6);
-  if (tpl === 2) pose(ctx, ['view_side', 'pose_back', 'view_front'][Math.floor(i / 4) % 3], 960, 1090, 940, { tint: fg, rim: acc, rimW: 8 });
-  if (tpl === 3) { const y = E.inCubic(clamp(lt2 * 4)) * H; ctx.fillStyle = acc; ctx.fillRect(0, y - 10, W, 20); }
+  if (death && i < 11) darkPlate(ctx, i - 8, bg, lt2, p);          // 死刑 1-3: her dark forms
+  else if (death) guillotine(ctx, lt2);                            // 死刑 4: the blade falls on the process table
+  else {
+    if (tpl === 0) focusLines(ctx, 960, 540, 160, 380, acc, 11 + i, 0.8);
+    if (tpl === 1) stripes(ctx, 0, 0, W, H, 60, bg, '#e04a66', lt2 * 400, -0.6);
+    if (tpl === 2) pose(ctx, ['view_side', 'pose_back', 'view_front'][Math.floor(i / 4) % 3], 960, 1090, 940, { tint: fg, rim: acc, rimW: 8 });
+    if (tpl === 3) { const y = E.inCubic(clamp(lt2 * 4)) * H; ctx.fillStyle = acc; ctx.fillRect(0, y - 10, W, 20); }
+  }
   const shift = tpl === 3 ? (lt2 > 0.25 ? 18 : 0) : 0;
   stamp(ctx, 'EXECUTION', t, EXE[i], { size: 230, y: 620 - shift, x: W / 2 - 9 * 138 / 2 - shift, color: fg, shadow: acc, decode: 0.12 });
   vText(ctx, death ? '死刑' : '执行', 1760, 260, 140, bg === C.paper ? C.paper : C.ink, bg === C.paper ? C.ink : (death ? C.paper : RED));
@@ -100,6 +104,41 @@ function shotExecution(ctx, lt, t, fx) {
   for (let k = 0; k < 12; k++) { ctx.fillStyle = k <= i ? acc : 'rgba(128,128,160,0.3)'; ctx.fillRect(110 + k * 40, 196, 30, 12); }
   fx.bloom = 0.45; fx.curve = 0.4; fx.scan = 0.1; fx.aberr = 3 + 12 * p; fx.glitch = (death ? 0.18 : 0.08) + 0.35 * p; fx.flash = 0.6 * p;
   fx.invert = lt2 < 1 / 24 + 1e-3 && i % 3 === 2 ? 1 : 0;
+}
+// 死刑 plates: a dark-form crop gradient-mapped to the hit's colours (ink → red for red hits,
+// ink → cobalt/ice for ink hits), slow push-in, halftone + scanlines, and a band of the
+// hit's own colour behind the lettering so the type reads exactly as before.
+const gm = canvas(W, H), gmx = gm.getContext('2d');
+function darkPlate(ctx, k, bg, lt2, p) {
+  const red = bg === RED, img = getA().dark[k], z = 1.04 + lt2 * 0.08 + 0.03 * p;
+  gmx.globalCompositeOperation = 'source-over'; gmx.fillStyle = '#000'; gmx.fillRect(0, 0, W, H);
+  gmx.save(); gmx.translate(W / 2, H / 2); gmx.scale(z, z); gmx.translate(-W / 2 + (k - 1) * 20 * lt2, -H / 2); gmx.drawImage(img, 0, 0, W, H); gmx.restore();
+  gmx.globalCompositeOperation = 'multiply'; gmx.fillStyle = red ? '#ff7b92' : '#8fa6ff'; gmx.fillRect(0, 0, W, H);
+  gmx.globalCompositeOperation = 'screen'; gmx.fillStyle = red ? '#3a0a18' : '#0a0c2a'; gmx.fillRect(0, 0, W, H);
+  gmx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(gm, 0, 0);
+  halftone(ctx, 0, 0, W, H, 18, red ? 'rgba(20,2,8,0.35)' : 'rgba(0,0,10,0.35)', (x, y) => 0.25 + 0.5 * Math.abs(Math.sin(x * 0.004 + y * 0.003)));
+  scanBars(ctx, 0, 0, W, H, 0.25, 4);
+  const v = ctx.createRadialGradient(W / 2, H / 2, 300, W / 2, H / 2, 1150); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.7)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.globalAlpha = 0.86; ctx.fillStyle = bg; ctx.fillRect(0, 430, W, 250); ctx.restore();   // lettering band
+  ctx.fillStyle = red ? C.ink : RED; ctx.fillRect(0, 426, W, 4); ctx.fillRect(0, 680, W, 4);
+}
+// 死刑 4: the program table, a pixel blade drops through it; every row it passes is severed.
+function guillotine(ctx, lt2) {
+  ctx.fillStyle = RED; ctx.fillRect(0, 0, W, H);
+  const y = E.inQuad(clamp(lt2 / 0.7)) * (H + 60) - 30, rows = [...PROGRAMS.map(p => p.name), '恬豆发芽了.exe'];
+  rows.forEach((n, r) => {
+    const ry = [262, 318, 374, 736, 792, 848, 904][r], cut = ry < y, s = `PID ${String(1000 + r * 7)}   ${n.padEnd(15, ' ')} ${r === 6 ? 'running' : cut ? 'KILLED ' : 'running'}`;
+    ctx.save();
+    if (cut) { ctx.translate((r % 2 ? 1 : -1) * 60 * clamp((y - ry) / 200), 0); ctx.globalAlpha = r === 6 ? 1 : 0.55; }
+    mono(ctx, s, 520, ry, 34, { color: r === 6 ? C.paper : C.ink, weight: 800 });
+    if (cut && r !== 6) { ctx.fillStyle = C.ink; ctx.fillRect(500, ry - 13, 980, 5); }
+    ctx.restore();
+  });
+  ctx.save(); ctx.globalAlpha = 0.86; ctx.fillStyle = RED; ctx.fillRect(0, 430, W, 250); ctx.restore();
+  ctx.fillStyle = 'rgba(5,5,11,0.25)'; ctx.fillRect(0, 0, W, Math.max(0, y - 14));                 // the severed part goes dark
+  ctx.fillStyle = C.ink; ctx.fillRect(0, y - 14, W, 28); ctx.fillStyle = C.paper; ctx.fillRect(0, y - 14, W, 4);
+  for (let x = 0; x < W; x += 48) { ctx.fillStyle = C.ink; ctx.beginPath(); ctx.moveTo(x, y + 14); ctx.lineTo(x + 24, y + 40); ctx.lineTo(x + 48, y + 14); ctx.fill(); }
 }
 // EIN DOS TROIS NE FEM LIU — one program deleted per beat.
 const WORDS = [['EIN', '一'], ['DOS', '二'], ['TROIS', '三'], ['NE', '四'], ['FEM', '五'], ['LIU', '六']];

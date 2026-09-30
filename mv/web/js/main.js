@@ -31,7 +31,8 @@ async function load() {
   const poses = {};
   await Promise.all(Object.entries(pm).map(async ([k, m]) => { poses[k] = { meta: m, img: await img(`assets/poses/${k}.${k.endsWith('plate') ? 'jpg' : 'png'}`) }; }));
   setPoses(poses);
-  return { meta, char, full, sil, lines, upper, inset, flats, poses };
+  const dark = await Promise.all([0, 1, 2].map(i => img(`assets/dark/dark_${i}.png`)));
+  return { meta, char, full, sil, lines, upper, inset, flats, poses, dark };
 }
 
 function hud(ctx, t, shot) {
