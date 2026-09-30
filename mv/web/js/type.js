@@ -38,21 +38,9 @@ export function cursor(ctx, x, y, size, t, color, solid) {
   ctx.fillRect(x + size * 0.06, y - size * 0.82, size * 0.5, size * 1.02);
 }
 
-// Lyrics of the demo section (English / Chinese from the provided sheet).
-export const LYRICS = [
-  { n: 1, t0: 0.05, t1: 1.52, en: 'Switch on the power line', zh: '接上你的电源线' },
-  { n: 2, t0: 1.56, t1: 2.95, en: 'Remember to put on', zh: '记得装备上' },
-  { n: 3, t0: 2.97, t1: 3.95, en: 'PROTECTION', zh: '绝缘护体', kw: true },
-  { n: 4, t0: 3.98, t1: 5.46, en: 'Lay down your pieces', zh: '摆好你的棋子' },
-  { n: 5, t0: 5.50, t1: 6.16, en: "And let's begin", zh: '让我们开始' },
-  { n: 6, t0: 6.20, t1: 7.10, en: 'OBJECT CREATION', zh: '生成对象', kw: true },
-  { n: 7, t0: 7.13, t1: 9.93, en: 'Fill in my data parameters', zh: '填写关于「我」的参数' },
-  { n: 8, t0: 9.95, t1: 11.15, en: 'INITIALIZATION', zh: '并初始化', kw: true },
-  { n: 9, t0: 11.18, t1: 12.62, en: 'Set up our new world', zh: '选择一个我们的世界' },
-  { n: 10, t0: 12.66, t1: 13.57, en: "And let's begin the", zh: '然后让我们开始一场' },
-  { n: 11, t0: 13.59, t1: 14.96, en: 'SIMULATION', zh: '模拟游戏', kw: true },
-];
-export const lyricAt = t => { let cur = null; for (const L of LYRICS) if (t >= L.t0) cur = L; return cur; };
+import { LYRICS } from './lyrics.js';
+export { LYRICS };
+export const lyricAt = t => { let cur = null; for (const L of LYRICS) if (t >= L.t0) cur = L; return cur && t < cur.t1 + 1.6 ? cur : null; };
 
 const THEMES = {
   dark: { num: '#40467f', bar: '#2b3068', en: C.paper, kw: C.paper, kwBg: C.violet, zh: C.comment, cur: C.ice },
@@ -103,7 +91,7 @@ export function lyricEditor(ctx, t, o = {}) {
   const hist = o.history ?? 1;
   const LY = LYRICS;
   for (let k = hist; k >= 1; k--) {
-    const P = LY[idx - k]; if (!P) continue;
+    const P = LY[idx - k]; if (!P || P.t1 < L.t0 - 3) continue;   // no stale lines across instrumentals
     lyricBlock(ctx, P, P.t1 + 5, { ...o, y: (o.y ?? 930) - step * k + scroll, alpha: (o.alpha ?? 1) * (k === 1 ? 0.34 : 0.14), noCursor: true });
   }
   lyricBlock(ctx, L, t, { ...o, y: (o.y ?? 930) + scroll });

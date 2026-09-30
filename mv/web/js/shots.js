@@ -446,9 +446,9 @@ function shotBoard(ctx, lt, t, fx) {
 }
 
 // SHOT 5 · "And let's begin": the RUN dialog, clicked by the user's cursor.
-function arrow(ctx, x, y, s) {
+function arrow(ctx, x, y, s, fill = C.paper, line = C.ink) {
   const P = ['X', 'XX', 'X.X', 'X..X', 'X...X', 'X....X', 'X.....X', 'X......X', 'X.......X', 'X........X', 'X.....XXXXX', 'X..X..X', 'X.X X..X', 'XX  X..X', 'X    X..X', '     X..X', '      XX'];
-  P.forEach((row, j) => [...row].forEach((c, i) => { if (c === ' ') return; ctx.fillStyle = c === 'X' ? C.ink : C.paper; ctx.fillRect(x + i * s, y + j * s, s, s); }));
+  P.forEach((row, j) => [...row].forEach((c, i) => { if (c === ' ') return; ctx.fillStyle = c === 'X' ? line : fill; ctx.fillRect(x + i * s, y + j * s, s, s); }));
 }
 function shotBegin(ctx, lt, t, fx) {
   const click = beat(12);
@@ -894,7 +894,7 @@ function hudStatus(ctx, t) {
 }
 const off2 = canvas(W, H), octx = off2.getContext('2d');
 function shotTitle(ctx, lt, t, fx) {
-  const hit = 14.98, cut1 = beat(37), cut2 = beat(40), off = beat(42);
+  const hit = 14.98, cut1 = beat(37), cut2 = beat(40), off = 1e9;   // (the demo ended with a CRT power-off here)
   const drawWide = (c, tt, variant) => {
     const k = inv(hit, cut1, tt);
     const cam = variant ? { z: lerp(1.0, 1.035, inv(cut2, off, tt)), x: -60, y: 250, s: 0.8, rot: -0.025 } : { z: lerp(1.0, 1.06, E.outCubic(k)), x: 0, y: 0, s: 0.66, rot: 0 };
@@ -947,5 +947,12 @@ export const SHOTS = [
   { t0: 11.2, t1: beat(27), name: 'world', draw: shotWorld, lyric: { x: 104, y: 930 } },
   { t0: beat(27), t1: beat(29), name: 'monitor', draw: shotMonitor, lyric: { x: 104, y: 930 } },
   { t0: beat(29), t1: 14.98, name: 'simulation', draw: shotSim, lyric: { x: 104, y: 930 } },
-  { t0: 14.98, t1: 20.01, name: 'title', draw: shotTitle, lyric: null },
+  { t0: 14.98, t1: beat(45), name: 'title', draw: shotTitle, lyric: null },
 ];
+
+export const getA = () => A;
+export {
+  drawCut, layer, toScreen, sticker, moon, stars, petals, softPetals, bgGrid, scanBars, vText,
+  piece, camera, drawBoard, arrow, globe, floorGrid, drawWorld, crt, screenGlass, room, SCR,
+  keyVisual, PIECES, pixelated, shotTitle,
+};

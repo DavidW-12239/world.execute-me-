@@ -1,7 +1,12 @@
 // Entry point: loads assets and fonts, then exposes MV.render(t) for the frame grabber.
 import { W, H, C, FPS, BEAT, B0, canvas, clamp } from './lib.js';
 import { lyricEditor, LYRICS, lyricAt, mono } from './type.js';
-import { SHOTS, setAssets } from './shots.js';
+import { SHOTS as DEMO, setAssets } from './shots.js';
+import { SHOTS2 } from './act2.js';
+import { SHOTS3 } from './act3.js';
+import { SHOTS4 } from './act4.js';
+
+const SHOTS = [...DEMO, ...SHOTS2, ...SHOTS3, ...SHOTS4].sort((a, b) => a.t0 - b.t0);
 import { Post } from './post.js';
 
 const img = src => new Promise((ok, err) => { const i = new Image(); i.onload = () => ok(i); i.onerror = err; i.src = src; });
@@ -76,6 +81,10 @@ function render(t) {
   ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, H);
   shot.draw(ctx, t - shot.t0, t, fx);
   ctx.restore();
+  if (fx.shake) {                                  // camera shake: re-blit the frame offset
+    const f = Math.round(t * FPS), dx = (Math.sin(f * 12.9898) * 43758.5453 % 1) * fx.shake, dy = (Math.sin(f * 78.233) * 12543.21 % 1) * fx.shake;
+    ctx.drawImage(scene, dx, dy);
+  }
   if (shot.lyric && !fx.noLyric) {
     ctx.save();
     if (shot.lyric.theme !== 'light') ctx.drawImage(scrim, 0, (shot.lyric.y ?? 930) - 200);
@@ -90,7 +99,7 @@ function render(t) {
 }
 
 window.MV = {
-  duration: 20, fps: FPS,
+  duration: 209, fps: FPS,
   get ready() { return ready; },
   render,
   debugScene: () => scene.toDataURL('image/png'),   // pre-post-processing frame, for debugging
