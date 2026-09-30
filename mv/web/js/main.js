@@ -19,12 +19,13 @@ async function load() {
     ...meta.groups.map(g => g.file),
   ].map(f => img('assets/' + f)));
   // Pull in every glyph subset the frames will use before the first frame is drawn.
-  const zh = LYRICS.map(l => l.zh).join('') + '装备黑纱手套颈环捧花绝缘护体让我们开始模拟游戏×「」';
+  const zh = LYRICS.map(l => l.zh).join('') + '恬豆发芽了装备黑纱手套颈环捧花绝缘护体让我们开始模拟游戏×「」';
   await Promise.all([
-    '400 40px "JetBrains Mono"', '500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"', '800 40px "JetBrains Mono"',
-    '400 40px VT323',
+    '400 40px "JetBrains Mono", "Noto Sans SC"', '500 40px "JetBrains Mono", "Noto Sans SC"', '700 40px "JetBrains Mono", "Noto Sans SC"', '800 40px "JetBrains Mono", "Noto Sans SC"',
+    '400 40px VT323, "Noto Sans SC"',
   ].map(f => document.fonts.load(f, 'ABCabc012✓▸●')));
   await Promise.all(['400 40px "Noto Sans SC"', '500 40px "Noto Sans SC"', '700 40px "Noto Sans SC"', '900 40px "Noto Serif SC"'].map(f => document.fonts.load(f, zh)));
+  await document.fonts.load('900 40px "Noto Sans SC"', '恬豆发芽了');
   await document.fonts.ready;
   const pm = await (await fetch('assets/poses/poses.json')).json();
   const poses = {};
@@ -42,7 +43,7 @@ function hud(ctx, t, shot) {
   for (const [x, y, dx, dy] of [[m, m, 1, 1], [W - m, m, -1, 1], [m, H - m - 34, 1, -1], [W - m, H - m - 34, -1, -1]]) {
     ctx.beginPath(); ctx.moveTo(x + dx * L, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * L); ctx.stroke();
   }
-  ctx.font = '26px VT323'; ctx.fillStyle = col; ctx.textAlign = 'left';
+  ctx.font = '26px VT323, "Noto Sans SC"'; ctx.fillStyle = col; ctx.textAlign = 'left';
   ctx.fillText('world.execute(me);   PID 0001', m + 14, m + 30);
   const f = Math.round(t * FPS), sec = Math.floor(f / FPS), fr = f % FPS;
   ctx.textAlign = 'right';

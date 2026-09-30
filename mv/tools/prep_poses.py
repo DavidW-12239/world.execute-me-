@@ -70,6 +70,8 @@ def faces():
 def white():
     wf = Image.open(f'{SRC}/white_full_src.jpg').convert('RGB'); wu = Image.open(f'{SRC}/white_up_src.jpg').convert('RGB')
     cut('white_full', wf, None, 1, 1920); cut('white_up', wu, None, 1, 1540)
+    # NOTE: the published assets were then post-processed: the grey moon behind the figure removed by
+    # flood fill, the train fading out where it meets the right image border, and all mattes softened.
     for n, im in (('white_full_plate', wf), ('white_up_plate', wu)):
         im.save(f'{OUT}/{n}.jpg', quality=92); meta[n] = {'w': im.width, 'h': im.height, 'bbox': [0, 0, im.width, im.height]}
 JOBS = {

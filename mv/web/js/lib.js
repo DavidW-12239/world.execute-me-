@@ -126,7 +126,7 @@ export function windowFrame(ctx, x, y, w, h, title, o = {}) {
   ctx.fillStyle = o.barBg || fg; ctx.fillRect(x, y, w, bar);
   ctx.fillStyle = o.barFg || C.navy;
   for (let i = 7; i < bar - 5; i += 5) ctx.fillRect(x + 44, y + i, w - 88, 2);
-  ctx.fillStyle = o.barBg || fg; ctx.font = `700 ${Math.round(bar * 0.56)}px "JetBrains Mono"`;
+  ctx.fillStyle = o.barBg || fg; ctx.font = `700 ${Math.round(bar * 0.56)}px "JetBrains Mono", "Noto Sans SC"`;
   const tw = ctx.measureText(title).width;
   ctx.fillRect(x + w / 2 - tw / 2 - 14, y + 3, tw + 28, bar - 6);
   ctx.fillStyle = o.barFg || C.navy; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

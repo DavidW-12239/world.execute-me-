@@ -2,6 +2,7 @@
 // keyword stamps. Everything snaps to the same palette as the demo shots.
 import { W, H, C, clamp, lerp, inv, E, hash, hash2, rng, onTwos, pulse, canvas, sparkle, focusLines, windowFrame, roundRect, tinted } from './lib.js';
 import { mono } from './type.js';
+import { avatar } from './cast.js';
 import { getA, arrow, moon, piece, crt, screenGlass, scanBars, vText, floorGrid } from './shots.js';
 
 export const RED = C.red, TEAL = '#5fc2b4';
@@ -59,8 +60,9 @@ export function deskIcon(ctx, key, label, x, y, o = {}) {
   const img = icon(key), s = key.startsWith('ME') ? 2.0 : 3.6, w = img.width * s, h = img.height * s;
   ctx.save(); ctx.translate(x, y); const sc = E.outBack(clamp(k)); ctx.scale(sc, sc);
   if (o.sel) { ctx.fillStyle = 'rgba(77,94,224,0.45)'; ctx.fillRect(-58, -52, 116, 132); ctx.strokeStyle = C.ice; ctx.setLineDash([4, 4]); ctx.strokeRect(-58, -52, 116, 132); ctx.setLineDash([]); }
-  blit(ctx, img, 0, -8 + (key.startsWith('ME') ? -6 : 0), s, { center: true });
-  ctx.font = '26px VT323'; ctx.textAlign = 'center';
+  if (key.startsWith('ME')) avatar(ctx, key === 'MEW' ? 'smile' : 'calm', 0, -14, 40, { lw: 3 });
+  else blit(ctx, img, 0, -8, s, { center: true });
+  ctx.font = '26px VT323, "Noto Sans SC"'; ctx.textAlign = 'center';
   const tw = ctx.measureText(label).width;
   ctx.fillStyle = o.sel ? C.cobalt : 'rgba(5,5,11,0.55)'; ctx.fillRect(-tw / 2 - 5, 44, tw + 10, 26);
   ctx.fillStyle = C.paper; ctx.fillText(label, 0, 64);
@@ -115,7 +117,7 @@ export function button(ctx, x, y, w, h, label, o = {}) {
   ctx.fillStyle = C.ink; ctx.fillRect(x + 5, y + 5, w, h);
   ctx.fillStyle = o.hot ? (o.color || C.ice) : '#1d2366'; ctx.fillRect(x + d, y + d, w, h);
   ctx.strokeStyle = o.hot ? C.paper : C.ice; ctx.lineWidth = 2; ctx.strokeRect(x + d, y + d, w, h);
-  const size = o.size || 26; ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center';
+  const size = o.size || 26; ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center';
   ctx.fillStyle = o.hot ? C.ink : C.ice; ctx.fillText(label, x + d + w / 2, y + d + h / 2 + size * 0.35);
 }
 export function progress(ctx, x, y, w, h, p, o = {}) {
@@ -143,7 +145,7 @@ export function stamp(ctx, word, t, t0, o = {}) {
   ctx.save(); ctx.translate(x + n * cell / 2, y); ctx.scale(pop, pop); ctx.translate(-(x + n * cell / 2), -y);
   if (o.shadow !== false) mono(ctx, word, x + 10, y + 10, size, { color: o.shadow || C.navy, weight: 800, scramble: (1 - dec) * 0.8, seed });
   mono(ctx, word, x, y, size, { color: o.color || C.paper, weight: 800, scramble: (1 - dec) * 0.8, seed });
-  if (o.outline) { ctx.lineWidth = 2.5; ctx.strokeStyle = o.outline; ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center'; [...word].forEach((ch, i) => ctx.strokeText(ch, x + (i + 0.5) * cell, y)); }
+  if (o.outline) { ctx.lineWidth = 2.5; ctx.strokeStyle = o.outline; ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center'; [...word].forEach((ch, i) => ctx.strokeText(ch, x + (i + 0.5) * cell, y)); }
   ctx.restore();
 }
 export function zhTag(ctx, zh, t, t0, o = {}) {

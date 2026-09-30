@@ -24,7 +24,7 @@ export function mono(ctx, str, x, y, size, o = {}) {
     let ch = chars[i]; const wide = isWide(ch), w = wide ? 2 : 1;
     if (o.scramble && ch !== ' ' && hash2(i, o.seed || 0) < o.scramble) ch = GLITCH[Math.floor(hash2(i * 7 + 3, o.seed || 0) * GLITCH.length)];
     ctx.fillStyle = (o.colorAt && o.colorAt(i)) || o.color || C.paper;
-    ctx.font = wide ? `${Math.min(weight, 700)} ${size * 0.96}px "Noto Sans SC"` : `${weight} ${size}px "JetBrains Mono"`;
+    ctx.font = wide ? `${Math.min(weight, 700)} ${size * 0.96}px "Noto Sans SC"` : `${weight} ${size}px "JetBrains Mono", "Noto Sans SC"`;
     ctx.fillText(ch, x + (col + w / 2) * cell, y);
     col += w;
   }
@@ -43,8 +43,8 @@ export { LYRICS };
 export const lyricAt = t => { let cur = null; for (const L of LYRICS) if (t >= L.t0) cur = L; return cur && t < cur.t1 + 1.6 ? cur : null; };
 
 const THEMES = {
-  dark: { num: '#40467f', bar: '#2b3068', en: C.paper, kw: C.paper, kwBg: C.violet, zh: C.comment, cur: C.ice },
-  light: { num: '#9ea3cf', bar: '#b9bce0', en: C.navy, kw: C.paper, kwBg: C.cobalt, zh: '#5b61ad', cur: C.cobalt },
+  dark: { num: '#40467f', bar: '#2b3068', en: C.paper, kw: C.paper, kwBg: C.violet, zh: '#c3c8f4', cur: C.ice },
+  light: { num: '#9ea3cf', bar: '#b9bce0', en: C.navy, kw: C.paper, kwBg: C.cobalt, zh: '#3a4096', cur: C.cobalt },
 };
 
 // One lyric as two editor rows:  07 │ English line▌
@@ -92,7 +92,7 @@ export function lyricEditor(ctx, t, o = {}) {
   const LY = LYRICS;
   for (let k = hist; k >= 1; k--) {
     const P = LY[idx - k]; if (!P || P.t1 < L.t0 - 3) continue;   // no stale lines across instrumentals
-    lyricBlock(ctx, P, P.t1 + 5, { ...o, y: (o.y ?? 930) - step * k + scroll, alpha: (o.alpha ?? 1) * (k === 1 ? 0.34 : 0.14), noCursor: true });
+    lyricBlock(ctx, P, P.t1 + 5, { ...o, y: (o.y ?? 930) - step * k + scroll, alpha: (o.alpha ?? 1) * (k === 1 ? 0.45 : 0.18), noCursor: true });
   }
   lyricBlock(ctx, L, t, { ...o, y: (o.y ?? 930) + scroll });
 }

@@ -14,7 +14,7 @@ const zhOf = (en, after = 20) => LYRICS.find(l => l.en === en && l.t0 > after).z
 
 // ---------------------------------------------------------------------------
 // Desktop layout shared by several scenes: six programs + me.exe down the right side.
-export const ICONS = [...PROGRAMS.map(p => ({ key: p.key, label: p.name })), { key: 'MEW', label: 'me.exe' }];
+export const ICONS = [...PROGRAMS.map(p => ({ key: p.key, label: p.name })), { key: 'MEW', label: '恬豆发芽了.exe' }];
 export const iconPos = i => [1790, 120 + i * 128];
 
 // Little app contents so each program reads at a glance.
@@ -80,9 +80,11 @@ function shotOpenMe(ctx, lt, t, fx) {
     ctx.restore();
     ctx.strokeStyle = C.ice; ctx.lineWidth = 3; ctx.strokeRect(x, y, w, h);
     ctx.fillStyle = C.ice; ctx.fillRect(x, y, w, 30 * (1 - k));
+    if (k > 0.85) { ctx.save(); ctx.globalAlpha = inv(0.85, 1, k); ctx.fillStyle = C.ink; ctx.fillRect(1440, 120, 360, 110); ctx.strokeStyle = C.ice; ctx.lineWidth = 2; ctx.strokeRect(1440, 120, 360, 110);
+      ctx.fillStyle = C.paper; ctx.font = '900 50px "Noto Sans SC"'; ctx.textAlign = 'left'; ctx.fillText('恬豆发芽了', 1464, 180); mono(ctx, 'status: RUNNING', 1466, 214, 18, { color: C.ice }); ctx.restore(); }
   }
   arrow(ctx, cx, cy, 5);
-  fx.noHud = t < open + 0.4; fx.curve = 0.3; fx.scan = 0.07; fx.bloom = 0.45;
+  fx.noHud = t < open + 0.4; fx.curve = 0.3; fx.scan = 0.07; fx.bloom = 0.25;
   fx.flash = 0.35 * pulse(t, [26.98], 9) + 0.8 * E.inExpo(inv(29.5, 29.75, t));
 }
 
@@ -123,8 +125,8 @@ function shotPoints(ctx, lt, t, fx) {
     ctx.fillRect(cx + X * f - 1.2, cy + y * f - 1.2, 2.6 * f, 2.6 * f);
   }
   ctx.globalAlpha = 1;
-  mono(ctx, `me = new PointSet(${String(Math.min(n, Math.floor(inv(29.75, 30.8, t) * n))).padStart(4, '0')});`, 110, 180, 28, { color: C.ice, weight: 700 });
-  if (t > 31.2) mono(ctx, 'me.giveTo(you, me.getDimension());', 110, 222, 28, { color: C.ice, count: Math.floor((t - 31.2) / 0.03) });
+  mono(ctx, `恬豆发芽了 = new PointSet(${String(Math.min(n, Math.floor(inv(29.75, 30.8, t) * n))).padStart(4, '0')});`, 110, 180, 28, { color: C.ice, weight: 700 });
+  if (t > 31.2) mono(ctx, '恬豆发芽了.giveTo(you, 恬豆发芽了.getDimension());', 110, 222, 28, { color: C.ice, count: Math.floor((t - 31.2) / 0.03) });
   if (t > 32.65) mono(ctx, `// dimension: 2 → 3`, 110, 264, 28, { color: C.lilac });
   stamp(ctx, 'DIMENSION', t, 32.65, { size: 150, x: 110, y: 460, shadow: C.deep });
   zhTag(ctx, zhOf('DIMENSION'), t, 32.65, { x: 1800, y: 260, size: 72, color: C.paper, box: C.cobalt });
@@ -160,8 +162,8 @@ function shotCircle(ctx, lt, t, fx) {
     ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(hx, hy, 14, 0, 7); ctx.fill();
   }
   mono(ctx, 'r = 1', cx0 + 40, cy - 12, 24, { color: C.navy, weight: 700 });
-  mono(ctx, 'if (me instanceof Circle)', 110, 160, 28, { color: C.navy, weight: 700, count: Math.floor((t - 33.3) / 0.03) });
-  if (t > 35.0) mono(ctx, '  you.receive(me.circumference);', 110, 202, 28, { color: C.navy, count: Math.floor((t - 35.0) / 0.03) });
+  mono(ctx, 'if (恬豆发芽了 instanceof Circle)', 110, 160, 28, { color: C.navy, weight: 700, count: Math.floor((t - 33.3) / 0.03) });
+  if (t > 35.0) mono(ctx, '  you.receive(恬豆发芽了.circumference);', 110, 202, 28, { color: C.navy, count: Math.floor((t - 35.0) / 0.03) });
   if (t > 36.3) mono(ctx, `C = 2πr = ${(6.2831 * roll).toFixed(4)}`, 110, 244, 28, { color: C.cobalt, weight: 800 });
   stamp(ctx, 'CIRCUMFERENCE', t, 36.25, { size: 116, x: 830, y: 230, color: C.navy, shadow: '#c9cbe6' });
   zhTag(ctx, zhOf('CIRCUMFERENCE'), t, 36.25, { x: 1790, y: 380, size: 80, color: C.paper, box: C.navy });
@@ -191,7 +193,7 @@ function shotSine(ctx, lt, t, fx) {
     ctx.save(); ctx.translate(x, f(x)); ctx.rotate(a); arrow(ctx, -12, -100, 5); ctx.restore();
     ctx.fillStyle = C.red; ctx.beginPath(); ctx.arc(x, f(x), 7, 0, 7); ctx.fill();
   }
-  mono(ctx, 'CH1  1V/div  ~  me(x) = sin x', x0, 170, 26, { color: C.ice, weight: 700 });
+  mono(ctx, 'CH1  1V/div  ~  恬豆发芽了(x) = sin x', x0, 170, 26, { color: C.ice, weight: 700 });
   if (t > 38.5) mono(ctx, "you.sitOn( me'(x) = cos x );", 900, 170, 26, { color: C.paper, count: Math.floor((t - 38.5) / 0.03) });
   stamp(ctx, 'TANGENTS', t, T0, { size: 170, x: 520, y: 340, shadow: C.deep });
   zhTag(ctx, zhOf('TANGENTS'), t, T0, { x: 1760, y: 330, size: 76, color: C.ink, box: C.ice });
@@ -222,7 +224,7 @@ function shotInfinity(ctx, lt, t, fx) {
     ctx.setLineDash([16, 12]); ctx.strokeStyle = C.paper; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(140, 760); ctx.lineTo(140 + 1640 * k, 760); ctx.stroke(); ctx.setLineDash([]);
     mono(ctx, 'y = you', 1600, 740, 26, { color: C.paper, weight: 700 });
     ctx.strokeStyle = C.lilac; ctx.lineWidth = 4; ctx.beginPath(); for (let i = 0; i <= 100 * k; i++) { const x = 140 + i * 16.4, y = 760 + 240 / (1 + i * 0.15); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
-    mono(ctx, 'lim   me(n) = you', 1250, 930, 30, { color: C.paper, weight: 700, count: Math.floor((t - 42.3) / 0.03) });
+    mono(ctx, 'lim   恬豆发芽了(n) = you', 1250, 930, 30, { color: C.paper, weight: 700, count: Math.floor((t - 42.3) / 0.03) });
     mono(ctx, 'n→∞', 1250, 962, 20, { color: C.paper, count: t > 42.5 ? 3 : 0 });
   }
   // LIMITATIONS: four walls slam shut around the loop
@@ -268,7 +270,7 @@ function shotCurrent(ctx, lt, t, fx) {
   const amp = state === 0 ? 20 : state === -1 ? 160 : 160 * (1 - E.outCubic(inv(fD, fD + 0.3, t)));
   for (let x = 0; x <= ow; x += 5) { const y = oy + oh / 2 - (state === 1 ? 140 * E.outCubic(inv(fD, fD + 0.3, t)) : 0) - amp * Math.sin(x * 0.03 + t * 12); x ? ctx.lineTo(ox + x, y) : ctx.moveTo(ox + x, y); }
   ctx.stroke();
-  mono(ctx, `me.current = ${state === 0 ? 'null' : state === -1 ? '"AC"' : '"DC"'};`, ox, oy + oh + 60, 32, { color: C.paper, weight: 700 });
+  mono(ctx, `恬豆发芽了.current = ${state === 0 ? 'null' : state === -1 ? '"AC"' : '"DC"'};`, ox, oy + oh + 60, 32, { color: C.paper, weight: 700 });
   fx.bloom = 0.7; fx.curve = 0.3; fx.scan = 0.08; fx.aberr = 1.3 + 8 * pulse(t, [fA, fD], 12); fx.flash = 0.35 * pulse(t, [44.5, fA, fD], 12);
 }
 // SHOT 20 · "And then blind my vision": her eye; a redaction bar; NO SIGNAL.
@@ -329,7 +331,8 @@ function shotTravel(ctx, lt, t, fx) {
   }
   // playhead
   ctx.fillStyle = C.red; ctx.fillRect(958, 560, 4, 280); ctx.beginPath(); ctx.moveTo(940, 560); ctx.lineTo(980, 560); ctx.lineTo(960, 590); ctx.fill();
-  blit(ctx, sprite('white'), 900, 520, 2.2, { center: true }); arrow(ctx, 995, 470, 5);
+  avatar(ctx, 'smile', 900, 500, 62, { lw: 5 }); arrow(ctx, 985, 470, 5);
+  mono(ctx, '恬豆发芽了', 848, 600, 22, { color: C.ice, weight: 700 });
   // big year counter
   const label = year > 0 ? `${String(year).padStart(4, '0')} A.D.` : `${String(1 - year).padStart(4, '0')} B.C.`;
   mono(ctx, label, 960 - label.length * 0.6 * 170 / 2, 400, 170, { color: year > 0 ? C.paper : C.ice, weight: 800 });
@@ -350,9 +353,9 @@ function shotUnite(ctx, lt, t, fx) {
     ctx.fillStyle = 'rgba(77,94,224,0.8)'; ctx.beginPath(); ctx.arc(960 - d / 2, 500, r, 0, 7); ctx.fill();
     ctx.fillStyle = 'rgba(122,85,240,0.8)'; ctx.beginPath(); ctx.arc(960 + d / 2, 500, r, 0, 7); ctx.fill(); ctx.restore();
     ctx.strokeStyle = C.paper; ctx.lineWidth = 4; for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(960 + s * d / 2, 500, r, 0, 7); ctx.stroke(); }
-    mono(ctx, 'me', 960 - d / 2 - 60 - (d > 100 ? 80 : 0), 520, 56, { color: C.paper, weight: 800 });
+    mono(ctx, '恬豆发芽了', 960 - d / 2 - 60 - (d > 100 ? 80 : 0), 520, 56, { color: C.paper, weight: 800 });
     mono(ctx, 'you', 960 + d / 2 - 40 + (d > 100 ? 60 : 0), 520, 56, { color: C.paper, weight: 800 });
-    mono(ctx, m < 0.5 ? 'me ∩ you' : 'me ∪ you  =  1', 110, 180, 34, { color: C.ice, weight: 800 });
+    mono(ctx, m < 0.5 ? '恬豆发芽了 ∩ you' : '恬豆发芽了 ∪ you  =  1', 110, 180, 34, { color: C.ice, weight: 800 });
   } else {
     // droste dive through nested rings
     const z = Math.pow(1.9, deep * 9), n = 18;
@@ -361,8 +364,11 @@ function shotUnite(ctx, lt, t, fx) {
       ctx.fillStyle = i % 2 ? C.cobalt : C.violet; ctx.beginPath(); ctx.arc(960, 520, r, 0, 7); ctx.fill();
       ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
     }
-    ctx.save(); ctx.translate(960, 520); ctx.rotate(t * 3);
-    blit(ctx, sprite('white'), 60, 0, 1.6, { center: true }); ctx.rotate(Math.PI); arrow(ctx, 40, -10, 4); ctx.restore();
+    const pr = 120 + deep * 110;
+    ctx.save(); ctx.beginPath(); ctx.arc(960, 520, pr, 0, 7); ctx.fillStyle = '#c9cadb'; ctx.fill(); ctx.clip();
+    pose(ctx, 'white_up', 960, 520 + pr * 1.12, pr * 2.5); ctx.restore();
+    ctx.strokeStyle = C.paper; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(960, 520, pr, 0, 7); ctx.stroke();
+    arrow(ctx, 960 + pr * 0.8, 520 + pr * 0.55, 5);
     mono(ctx, `depth ${String(Math.floor(deep * 64)).padStart(2, '0')}`, 110, 180, 34, { color: C.paper, weight: 800 });
   }
   fx.bloom = 0.6; fx.curve = 0.35; fx.scan = 0.08; fx.aberr = 1.5; fx.flash = 0.35 * pulse(t, [55.25, 57.0, 58.1], 12);
@@ -370,7 +376,7 @@ function shotUnite(ctx, lt, t, fx) {
 
 // ---------------------------------------------------------------------------
 // PRE-CHORUS 1
-const NOTES = ['♥ me.exe: good morning!', '★ you levelled up', '✉ me.exe sent a song', '♪ playing: your favourite', '✦ +100 happiness', '♥ me.exe: look at the moon', '★ achievement unlocked', '✉ 3 new messages'];
+const NOTES = ['♥ 恬豆发芽了.exe: good morning!', '★ you levelled up', '✉ 恬豆发芽了.exe sent a song', '♪ playing: your favourite', '✦ +100 happiness', '♥ 恬豆发芽了.exe: look at the moon', '★ achievement unlocked', '✉ 3 new messages'];
 // SHOT 24 · "If I can give you all the STIMULATIONS": notifications rain on the desktop.
 function shotStim(ctx, lt, t, fx) {
   wallpaper(ctx, t); menubar(ctx, t);
@@ -397,7 +403,7 @@ function shotSatisfy(ctx, lt, t, fx) {
   wallpaper(ctx, t); menubar(ctx, t);
   const T0 = 65.75;
   const w = 900, h = 420, x = 510, y = 250;
-  appWindow(ctx, x, y, w, h, 'me.exe — feedback', (c, b) => {
+  appWindow(ctx, x, y, w, h, '恬豆发芽了.exe — feedback', (c, b) => {
     mono(c, 'How satisfied are you with me?', b.x + 50, b.y + 80, 34, { color: C.paper, weight: 700 });
     avatar(c, t > 65.75 ? 'smile' : 'calm', b.x + b.w - 100, b.y + 290, 64);
     const stars = [beat(137), beat(138), beat(139), beat(140), beat(141)];
@@ -455,7 +461,7 @@ function shotTrapped(ctx, lt, t, fx) {
 const LY = { x: 104, y: 930 };
 export const SHOTS2 = [
   { t0: beat(45), t1: beat(58), name: 'desktop', draw: shotDesktop, lyric: null },
-  { t0: beat(58), t1: 29.75, name: 'open me.exe', draw: shotOpenMe, lyric: null },
+  { t0: beat(58), t1: 29.75, name: 'open 恬豆发芽了.exe', draw: shotOpenMe, lyric: null },
   { t0: 29.75, t1: 33.25, name: 'points', draw: shotPoints, lyric: LY },
   { t0: 33.25, t1: 37.0, name: 'circle', draw: shotCircle, lyric: { ...LY, theme: 'light' }, theme: 'light' },
   { t0: 37.0, t1: 40.75, name: 'sine', draw: shotSine, lyric: LY },

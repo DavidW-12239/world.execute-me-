@@ -62,7 +62,7 @@ function shotTaskman(ctx, lt, t, fx) {
     wallpaper(ctx, t, { moon: false, top: '#1a0612' }); menubar(ctx, t, { user: false, red: true, clock: '00:13' });
     appWindow(ctx, 360, 120, 1200, 760, 'Task Manager — world', (c, b) => {
       mono(c, 'PROCESS            CPU    MEMORY   STATUS', b.x + 40, b.y + 60, 26, { color: C.comment, weight: 700 });
-      const procs = [...PROGRAMS.map(p => p.name), 'me.exe'];
+      const procs = [...PROGRAMS.map(p => p.name), '恬豆发芽了.exe'];
       const hover = Math.min(5, Math.floor(inv(141, 146.5, t) * 6));
       procs.forEach((n, i) => {
         const y = b.y + 120 + i * 74, me = i === 6, cpu = me ? 0 : Math.round(20 + 60 * Math.abs(Math.sin(t * 3 + i)));
@@ -131,12 +131,12 @@ function shotCount(ctx, lt, t, fx) {
 function shotBin(ctx, lt, t, fx) {
   const T0 = 165.25;
   wallpaper(ctx, t, { moon: false, top: '#140a26' }); menubar(ctx, t, { user: false, clock: '00:21' });
-  deskIcon(ctx, 'ME', 'me.exe', 1790, 140, {}); deskIcon(ctx, 'BIN', 'Recycle Bin', 1790, 300, {});
+  deskIcon(ctx, 'ME', '恬豆发芽了.exe', 1790, 140, {}); deskIcon(ctx, 'BIN', 'Recycle Bin', 1790, 300, {});
   appWindow(ctx, 300, 140, 1100, 640, 'Recycle Bin', (c, b) => {
     PROGRAMS.forEach((p, i) => {
       const y = b.y + 80 + i * 70; if (t > T0 + i * 0.05) return;
       blit(c, icon(p.key), b.x + 40, y - 38, 2);
-      mono(c, `${p.name.padEnd(12, ' ')} ${p.what.padEnd(8, ' ')}  deleted by me.exe`, b.x + 110, y, 26, { color: C.paper });
+      mono(c, `${p.name.padEnd(12, ' ')} ${p.what.padEnd(8, ' ')}  deleted by 恬豆发芽了.exe`, b.x + 110, y, 26, { color: C.paper });
     });
     button(c, b.x + b.w - 420, b.y + b.h - 90, 380, 60, 'Empty Recycle Bin', { hot: t > T0 - 0.3, pressed: t > T0 && t < T0 + 0.1, color: RED });
   });
@@ -148,7 +148,7 @@ function shotOnly(ctx, lt, t, fx) {
   const T0 = 169.0;
   wallpaper(ctx, t, { moon: false, top: '#140a26' }); menubar(ctx, t, { user: false, clock: '00:24' });
   const s = lerp(1.0, 1.6, E.inOutCubic(inv(166.25, T0, t)));
-  ctx.save(); ctx.translate(960, 440); ctx.scale(s, s); deskIcon(ctx, 'ME', 'me.exe', 0, 0, { sel: true }); ctx.restore();
+  ctx.save(); ctx.translate(960, 440); ctx.scale(s, s); deskIcon(ctx, 'ME', '恬豆发芽了.exe', 0, 0, { sel: true }); ctx.restore();
   mono(ctx, 'programs running: 1', 740, 700, 32, { color: C.ice, weight: 700 });
   mono(ctx, 'users logged in:  0', 740, 744, 32, { color: C.comment, weight: 700 });
   if (t > T0) { stamp(ctx, 'EXECUTION', t, T0, { size: 190, y: 330, shadow: RED }); zhTag(ctx, zhOf('EXECUTION', 168), t, T0, { x: 1780, y: 300, size: 70, color: C.paper, box: RED }); }
@@ -264,12 +264,12 @@ function shotLoveCage(ctx, lt, t, fx) {
 // ---------------------------------------------------------------------------
 // OUTRO — she uninstalls herself.
 const YES = beat(422);
-const FILES = ['bouquet.obj', 'gloves.obj', 'veil.obj', 'choker.obj', 'hair.col', 'skin.col', 'dress.col', 'lines.svg', 'points.dat', 'love.dll', 'me.exe'];
+const FILES = ['bouquet.obj', 'gloves.obj', 'veil.obj', 'choker.obj', 'hair.col', 'skin.col', 'dress.col', 'lines.svg', 'points.dat', 'love.dll', '恬豆发芽了.exe'];
 function shotUninstall(ctx, lt, t, fx) {
   wallpaper(ctx, t, { moon: false }); menubar(ctx, t, { user: false, clock: '03:32' });
-  deskIcon(ctx, 'ME', 'me.exe', 1790, 140, {});
+  deskIcon(ctx, 'ME', '恬豆发芽了.exe', 1790, 140, {});
   appWindow(ctx, 480, 300, 960, 440, 'Uninstall', (c, b) => {
-    mono(c, 'Remove me.exe and all of its', b.x + 60, b.y + 100, 34, { color: C.paper, weight: 700 });
+    mono(c, 'Remove 恬豆发芽了.exe and all of its', b.x + 60, b.y + 100, 34, { color: C.paper, weight: 700 });
     mono(c, 'components from this world?', b.x + 60, b.y + 146, 34, { color: C.paper, weight: 700 });
     button(c, b.x + b.w - 440, b.y + b.h - 110, 180, 64, 'Yes', { hot: t > YES, pressed: t > YES && t < YES + 0.1, color: C.paper });
     button(c, b.x + b.w - 230, b.y + b.h - 110, 180, 64, 'No', { hot: t > 194.0 && t < 194.6 });
@@ -330,7 +330,7 @@ function shotEnd(ctx, lt, t, fx) {
     const sh = Math.max(3, H * (1 - v)), sw = Math.max(4, W * (1 - h2));
     ctx.save(); ctx.globalAlpha = clamp(1 - inv(off + 0.28, off + 0.6, t)); ctx.drawImage(tmp, W / 2 - sw / 2, H / 2 - sh / 2, sw, sh);
     ctx.fillStyle = `rgba(230,238,255,${v})`; ctx.fillRect(W / 2 - sw / 2, H / 2 - sh / 2, sw, sh); ctx.restore();
-    if (t > off + 0.9) mono(ctx, '> process exited with code 0_', 110, 980, 26, { color: C.dim, count: Math.floor((t - off - 0.9) / 0.03) });
+    if (t > off + 0.9) mono(ctx, '> 恬豆发芽了.exe exited with code 0_', 110, 980, 26, { color: C.comment, count: Math.floor((t - off - 0.9) / 0.03) });
     fx.noHud = true;
   }
   fx.noLyric = true; fx.bloom = 0.6; fx.curve = 0.3; fx.scan = 0.07; fx.vig = 0.9;

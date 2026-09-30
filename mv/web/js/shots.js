@@ -237,9 +237,9 @@ function shotBoot(ctx, lt, t, fx) {
     [0.50, 'CPU   HEART-01 @ 130 BPM .......', 'OK'],
     [0.64, 'MEM   0640K  LOVE ..............', 'OK'],
     [0.78, 'PWR   LINE-IN ..................', press],
-    [1.22, 'BOOT  /sys/me.exe', ''],
+    [1.22, 'BOOT  /sys/恬豆发芽了.exe', ''],
   ];
-  ctx.font = '34px VT323'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.font = '34px VT323, "Noto Sans SC"'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
   lines.forEach(([t0, s, st], i) => {
     if (t < t0) return;
     const n = Math.floor((t - t0) / 0.012);
@@ -273,10 +273,11 @@ function shotEquip(ctx, lt, t, fx) {
   bgGrid(ctx, 24, '#e0e0ef', 120, '#cfd0e8', -lt * 20, 0);
 
   // header
-  mono(ctx, 'CHARACTER SHEET', 110, 132, 30, { color: C.navy, weight: 800 });
-  mono(ctx, 'me.obj  /  rev.01  /  EQUIPMENT', 110, 172, 20, { color: '#6d72b8', weight: 500 });
-  ctx.fillStyle = C.navy; for (let i = 0; i < 38; i++) if (hash(i * 3) > 0.35) ctx.fillRect(560 + i * 7, 108, hash(i) > 0.5 ? 4 : 2, 30);
-  ctx.fillRect(110, 190, 700, 3);
+  mono(ctx, 'CHARACTER SHEET  //  NAME', 110, 122, 20, { color: '#6d72b8', weight: 700 });
+  ctx.fillStyle = C.navy; ctx.font = '900 64px "Noto Sans SC"'; ctx.textAlign = 'left'; ctx.fillText('恬豆发芽了', 106, 190);
+  mono(ctx, '恬豆发芽了.obj  /  rev.01  /  EQUIPMENT', 110, 222, 18, { color: '#6d72b8', weight: 500 });
+  ctx.fillStyle = C.navy; for (let i = 0; i < 30; i++) if (hash(i * 3) > 0.35) ctx.fillRect(560 + i * 7, 150, hash(i) > 0.5 ? 4 : 2, 30);
+  ctx.fillRect(110, 234, 700, 3);
 
   // three views, as on the design sheet: front (big), side, back — each slides in on its own beat
   const bob = Math.sin(onTwos(lt) * 5) * 3;
@@ -349,7 +350,7 @@ function shotProtect(ctx, lt, t, fx) {
   const dec = clamp((t - hit) / 0.2);
   mono(ctx, word, wx + 10, 640 + 10, size, { color: inv2 ? C.cobalt : C.navy, weight: 800, scramble: (1 - dec) * 0.8, seed: Math.round(t * 24) });
   mono(ctx, word, wx, 640, size, { color: inv2 ? C.ink : C.paper, weight: 800, scramble: (1 - dec) * 0.8, seed: Math.round(t * 24) });
-  if (inv2) { ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = C.paper; ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center';
+  if (inv2) { ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = C.paper; ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center';
     for (let i = 0; i < word.length; i++) ctx.strokeText(word[i], wx + (i + 0.5) * cell, 640); ctx.restore(); }
   // figure: black paper-cut silhouette, then the real figure after the colour swap
   const s = lerp(0.60, 0.635, E.outCubic(inv(hit, hit + 0.9, t))), X = 960, Y = 580, SX = 515, SY = 800;
@@ -357,7 +358,7 @@ function shotProtect(ctx, lt, t, fx) {
   if (inv2) { layer(ctx, tinted(A.sil, C.cobalt, 'sil'), X + 16, Y + 12, s, SX, SY); drawCut(ctx, X, Y, s, SX, SY); }
   else { sticker(ctx, X, Y, s, SX, SY, 4, C.paper); layer(ctx, tinted(A.sil, C.ink, 'sil'), X, Y, s, SX, SY); }
   // outlined copy in front to weave the word through her
-  ctx.save(); ctx.globalAlpha = 0.9; ctx.lineWidth = 2.5; ctx.strokeStyle = inv2 ? C.ice : C.paper; ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center';
+  ctx.save(); ctx.globalAlpha = 0.9; ctx.lineWidth = 2.5; ctx.strokeStyle = inv2 ? C.ice : C.paper; ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center';
   for (let i = 0; i < word.length; i++) ctx.strokeText(word[i], wx + (i + 0.5) * cell, 640); ctx.restore();
   vText(ctx, '绝缘护体', 1730, 250, 118, inv2 ? C.ink : C.paper, inv2 ? C.paper : C.ink);
   mono(ctx, '[✓] PROTECTION.dll  loaded', 1300, 1000, 26, { color: inv2 ? C.ice : C.paper, weight: 700 });
@@ -375,7 +376,7 @@ const PIECES = [
   { i: 4, t: 4.67, type: 'bishop', name: 'NE', x: 1.5, z: 1.5 },
   { i: 5, t: 4.90, type: 'pawn', name: 'FEM', x: -3.5, z: 2.5 },
   { i: 6, t: 5.06, type: 'king', name: 'LIU', x: 3.5, z: 0.5 },
-  { i: 0, t: beat(11), type: 'queen', name: 'ME', x: 0.5, z: -0.5, me: true },
+  { i: 0, t: beat(11), type: 'queen', name: '恬豆发芽了', x: 0.5, z: -0.5, me: true },
 ];
 function drawBoard(ctx, t, lt, theta) {
   const cam = camera(theta, 7.2, 9.6, 0.78);
@@ -405,7 +406,7 @@ function drawBoard(ctx, t, lt, theta) {
   quad(e, gq); ctx.restore();
   ctx.strokeStyle = C.cobalt; ctx.lineWidth = 2; ctx.beginPath(); e.forEach((p, i) => { const q = cam(p[0], 0, p[1]); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.closePath(); ctx.stroke();
   // rank/file labels
-  ctx.font = '22px VT323'; ctx.fillStyle = C.dim; ctx.textAlign = 'center';
+  ctx.font = '22px VT323, "Noto Sans SC"'; ctx.fillStyle = C.dim; ctx.textAlign = 'center';
   for (let i = 0; i < 8; i++) { const q = cam(-4 + i + 0.5, 0, -4.2); ctx.fillText('ABCDEFGH'[i], q[0], q[1] + 20); }
   return cam;
 }
@@ -438,7 +439,7 @@ function shotBoard(ctx, lt, t, fx) {
       const k = E.outBack(inv(p.t + 0.05, p.t + 0.25, t));
       const label = `[${p.i}] ${p.name}.exe`;
       ctx.save(); ctx.globalAlpha = clamp(k); ctx.translate(bx, by - hh - 30 - 18 * k);
-      ctx.font = '700 20px "JetBrains Mono"'; const w = ctx.measureText(label).width + 20;
+      ctx.font = '700 20px "JetBrains Mono", "Noto Sans SC"'; const w = ctx.measureText(label).width + 20;
       ctx.fillStyle = p.me ? C.ice : C.ink; ctx.fillRect(-w / 2, -26, w, 32);
       ctx.strokeStyle = p.me ? C.paper : C.ice; ctx.lineWidth = 1.5; ctx.strokeRect(-w / 2, -26, w, 32);
       ctx.fillStyle = p.me ? C.ink : C.ice; ctx.textAlign = 'center'; ctx.fillText(label, 0, -3);
@@ -496,7 +497,7 @@ function shotBegin(ctx, lt, t, fx) {
 function shotCreate(ctx, lt, t, fx) {
   ctx.fillStyle = '#0a0f3c'; ctx.fillRect(0, 0, W, H);
   bgGrid(ctx, 30, '#121a55', 150, '#1d2672', 0, 0);
-  ctx.fillStyle = '#2c3690'; ctx.font = '20px VT323'; ctx.textAlign = 'left';
+  ctx.fillStyle = '#2c3690'; ctx.font = '20px VT323, "Noto Sans SC"'; ctx.textAlign = 'left';
   for (let x = 150; x < W; x += 150) ctx.fillText(String(x).padStart(4, '0'), x + 4, H - 60);
   for (let y = 150; y < H; y += 150) ctx.fillText(String(y).padStart(4, '0'), 8, y - 4);
   const s = 0.64, X = 1210, Y = 545, SX = 512, SY = 768;
@@ -531,7 +532,7 @@ function shotCreate(ctx, lt, t, fx) {
   const words = [['OBJECT', 330], ['CREATION', 480]];
   words.forEach(([wd, y], i) => {
     const size = 150, cell = size * 0.6, k = inv(6.21 + i * 0.08, 6.21 + i * 0.08 + 0.12, t);
-    ctx.save(); ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center'; ctx.lineWidth = 2.5; ctx.strokeStyle = C.ice;
+    ctx.save(); ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center'; ctx.lineWidth = 2.5; ctx.strokeStyle = C.ice;
     [...wd].forEach((ch, j) => { if (j < k * wd.length) ctx.strokeText(ch, 110 + (j + 0.5) * cell, y); });
     const fw = E.outCubic(inv(6.45 + i * 0.1, 6.9 + i * 0.1, t)) * wd.length * cell;
     ctx.beginPath(); ctx.rect(110, y - size, fw, size * 1.3); ctx.clip();
@@ -539,7 +540,7 @@ function shotCreate(ctx, lt, t, fx) {
     ctx.restore();
   });
   const code = [
-    ['> me = new Object("ME");', 6.3],
+    ['> 恬豆发芽了 = new Object("恬豆发芽了");', 6.3],
     [`  vertices ....... ${String(arrived).padStart(4, '0')}`, 6.35],
     [`  edges .......... ${String(Math.floor(arrived * 2.61)).padStart(5, '0')}`, 6.4],
     ['  soul ........... null', 6.8],
@@ -551,7 +552,7 @@ function shotCreate(ctx, lt, t, fx) {
 
 // SHOT 7 · "Fill in my data parameters": properties dialog paints her in flat cel colours.
 const PARAMS = [
-  { t: 7.16, k: 'name', v: '"ME"' },
+  { t: 7.16, k: 'name', v: '"恬豆发芽了"' },
   { t: 7.26, k: 'type', v: 'AI  // bride.ver' },
   { t: 7.40, k: 'dress', v: '#1B1D27', groups: [0, 1] },
   { t: 7.70, k: 'legs', v: '#4C4A58', groups: [2] },
@@ -590,7 +591,7 @@ function shotParams(ctx, lt, t, fx) {
     if (wp < 1) { ctx.fillStyle = C.paper; ctx.fillRect(0, H * wp - 3, W, 6); }
   }
   // properties window
-  const w = windowFrame(ctx, 90, 130, 740, 610, 'me.obj — Properties', { fg: C.ice });
+  const w = windowFrame(ctx, 90, 130, 740, 610, '恬豆发芽了.obj — Properties', { fg: C.ice });
   PARAMS.forEach((P, i) => {
     if (t < P.t) return;
     const y = w.y + 66 + i * 58, n = Math.floor((t - P.t) / 0.03);
@@ -634,12 +635,12 @@ function shotInit(ctx, lt, t, fx) {
   const prog = clamp((t - 9.95) / (11.1 - 9.95));
   // giant outlined keyword behind the image window, filling with progress
   const word = 'INITIALIZATION', size = 196, cell = size * 0.6, wx = W / 2 - word.length * cell / 2, wy = 610;
-  ctx.save(); ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center'; ctx.lineWidth = 2; ctx.strokeStyle = '#2d3480';
+  ctx.save(); ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center'; ctx.lineWidth = 2; ctx.strokeStyle = '#2d3480';
   [...word].forEach((ch, i) => ctx.strokeText(ch, wx + (i + 0.5) * cell, wy));
   ctx.beginPath(); ctx.rect(wx, 0, word.length * cell * prog, H); ctx.clip(); ctx.fillStyle = C.cobalt;
   [...word].forEach((ch, i) => ctx.fillText(ch, wx + (i + 0.5) * cell, wy)); ctx.restore();
   // hex dump (left) and memory map (right)
-  ctx.font = '26px VT323'; ctx.textAlign = 'left';
+  ctx.font = '26px VT323, "Noto Sans SC"'; ctx.textAlign = 'left';
   const row0 = Math.floor((t - 9.95) * 40);
   for (let r = 0; r < 18; r++) {
     const addr = (0xA400 + (row0 + r) * 16).toString(16).toUpperCase().padStart(6, '0');
@@ -736,7 +737,7 @@ function drawWorld(ctx, t, o = {}) {
     }
   }
   if (o.code !== false) {
-    const lines = [['world = new World();', 11.24], ['world.moon  = new Circle(300);', 11.5], ['world.floor = new Grid(Infinity);', 11.72], ['world.add(me);', 11.8], ['world.add(you);   // pending...', 12.25]];
+    const lines = [['world = new World();', 11.24], ['world.moon  = new Circle(300);', 11.5], ['world.floor = new Grid(Infinity);', 11.72], ['world.add(恬豆发芽了);', 11.8], ['world.add(you);   // pending...', 12.25]];
     lines.forEach(([s2, tt], i) => { if (t > tt) mono(ctx, s2, 110, 150 + i * 38, 26, { color: i === 4 ? C.lilac : C.ice, weight: i ? 400 : 700, count: Math.floor((t - tt) / 0.014) }); });
   }
 }
@@ -762,7 +763,7 @@ function crt(ctx, x, y, w, h) {                   // monitor housing around scre
   ctx.fillStyle = '#2c3060'; for (let i = 0; i < 9; i++) ctx.fillRect(bx + bw - 160 + i * 14, by + bh - 48, 6, 26);
   ctx.fillStyle = C.ice; ctx.beginPath(); ctx.arc(bx + 60, by + bh - 36, 7, 0, 7); ctx.fill();
   ctx.fillStyle = 'rgba(169,198,255,0.4)'; ctx.beginPath(); ctx.arc(bx + 60, by + bh - 36, 16, 0, 7); ctx.fill();
-  ctx.font = '800 18px "JetBrains Mono"'; ctx.fillStyle = '#9ea4d8'; ctx.textAlign = 'left'; ctx.fillText('WORLD/98', bx + 90, by + bh - 29);
+  ctx.font = '800 18px "JetBrains Mono", "Noto Sans SC"'; ctx.fillStyle = '#9ea4d8'; ctx.textAlign = 'left'; ctx.fillText('WORLD/98', bx + 90, by + bh - 29);
 }
 function screenGlass(ctx, x, y, w, h) {
   scanBars(ctx, x, y, w, h, 0.22, 3);
@@ -833,7 +834,7 @@ function shotSim(ctx, lt, t, fx) {
     const jy = (hash(i * 5 + Math.floor(t * 12)) - 0.5) * 30 * clamp((t - 14.4) * 2);
     const x = wx + (i + 0.5) * cell, y = 640 + (1 - k) * -120 + jy;
     ctx.save(); ctx.translate(x, y); ctx.scale(1, clamp(k, 0, 1.2));
-    ctx.font = `800 ${size}px "JetBrains Mono"`; ctx.textAlign = 'center';
+    ctx.font = `800 ${size}px "JetBrains Mono", "Noto Sans SC"`; ctx.textAlign = 'center';
     const outline = i % 3 === 1;
     ctx.fillStyle = bg === C.paper ? C.ink : C.paper; ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 4;
     if (outline) ctx.strokeText(ch, 0, 0); else { ctx.fillStyle = bg === C.cobalt ? C.ink : C.cobalt; ctx.fillText(ch, 8, 8); ctx.fillStyle = bg === C.paper ? C.ink : C.paper; ctx.fillText(ch, 0, 0); }
@@ -889,8 +890,8 @@ function titleType(ctx, t) {
   if (last) cursor(ctx, last.x1 + 6, last.y, 66, t, C.ice, t < 16.05);
   if (t > beat(35)) {
     const k = inv(beat(35), beat(35) + 0.3, t);
-    mono(ctx, '// music : Mili', 154, 706, 24, { color: C.comment, count: Math.floor(k * 16) });
-    mono(ctx, '// MV demo 00:00-00:20', 154, 742, 24, { color: C.comment, count: Math.floor(k * 24) });
+    ctx.save(); ctx.globalAlpha = clamp(k * 2); ctx.fillStyle = C.paper; ctx.font = '900 54px "Noto Sans SC"'; ctx.textAlign = 'left'; ctx.fillText('恬豆发芽了', 152, 722); ctx.restore();
+    mono(ctx, '// music : Mili', 154, 768, 24, { color: '#b4b9ee', count: Math.floor(k * 16) });
   }
 }
 function insetPanel(ctx, t) {
@@ -901,7 +902,7 @@ function insetPanel(ctx, t) {
   ctx.fillStyle = C.paper; ctx.fillRect(x - 40, y + h * k + 30, 120 * k, 3); ctx.fillStyle = C.cobalt; ctx.fillRect(x + 20, y + h * k + 44, 160 * k, 8);
 }
 function hudStatus(ctx, t) {
-  const rows = [['me.exe', ''], ['status', 'RUNNING'], ['user', 'you'], ['uptime', `00:00:${String(Math.floor(t)).padStart(2, '0')}`]];
+  const rows = [['恬豆发芽了.exe', ''], ['status', 'RUNNING'], ['user', 'you'], ['uptime', `00:00:${String(Math.floor(t)).padStart(2, '0')}`]];
   rows.forEach(([k, v], i) => mono(ctx, `${k.padEnd(7, ' ')}${v ? ': ' + v : ''}`, 1450, 820 + i * 34, 24, { color: i ? C.ice : C.paper, weight: i ? 400 : 800 }));
 }
 const off2 = canvas(W, H), octx = off2.getContext('2d');
@@ -925,7 +926,7 @@ function shotTitle(ctx, lt, t, fx) {
     pose(ctx, 'pose_hug', X, Y, hh, { glow: C.ice });
     softPetals(ctx, t, 26, 13, 1.1, 2, 1);
     mono(ctx, 'while (you.away) {', 110, 880, 30, { color: C.paper, weight: 700, count: Math.floor((t - cut1) / 0.03) });
-    mono(ctx, '    me.wait();', 110, 924, 30, { color: C.ice, weight: 400, count: Math.floor((t - cut1 - 0.5) / 0.03) });
+    mono(ctx, '    恬豆发芽了.wait();', 110, 924, 30, { color: C.ice, weight: 400, count: Math.floor((t - cut1 - 0.5) / 0.03) });
     mono(ctx, '}', 110, 968, 30, { color: C.paper, weight: 700, count: t > cut1 + 0.9 ? 1 : 0 });
   } else if (t < off) drawWide(ctx, t, 1);
   else {                                              // CRT power-off, bookending the opening

@@ -65,7 +65,7 @@ function shotEggplant(ctx, lt, t, fx) {
   const sq = 1 - 0.12 * pulse(t, bs, 12);
   ctx.save(); ctx.translate(560, 820 + bounceY(t, bs)); ctx.scale(1 / sq, sq); blit(ctx, EGG(), 0, -300, 12, { center: true }); ctx.restore();
   ctx.fillStyle = 'rgba(18,22,64,0.2)'; ctx.beginPath(); ctx.ellipse(560, 850, 200, 26, 0, 0, 7); ctx.fill();
-  label(ctx, 1060, 170, [['Serving', '1 me'], ['Calories', '0 kcal'], ['Time', '24 h/day'], ['Love', '100 %'], ['Loneliness', '0 g']], t, 75.5, 'Nutrition Facts');
+  label(ctx, 1060, 170, [['Serving', '1 恬豆发芽了'], ['Calories', '0 kcal'], ['Time', '24 h/day'], ['Love', '100 %'], ['Loneliness', '0 g']], t, 75.5, 'Nutrition Facts');
   stamp(ctx, 'NUTRIENTS', t, T0, { size: 150, x: 1000, y: 800, color: C.navy, shadow: '#c9cbe6' });
   zhTag(ctx, zhOf('NUTRIENTS', 70), t, T0, { x: 170, y: 220, size: 76, color: C.paper, box: C.violet });
   fx.bloom = 0.15; fx.vig = 0.3; fx.curve = 0.25; fx.scan = 0.05; fx.flash = 0.3 * pulse(t, [73.75, T0], 12);
@@ -86,7 +86,7 @@ function shotTomato(ctx, lt, t, fx) {
   ctx.fillStyle = 'rgba(18,22,64,0.2)'; ctx.beginPath(); ctx.ellipse(960, 830, 220, 26, 0, 0, 7); ctx.fill();
   const mols = [[380, 330], [1540, 300], [300, 700], [1620, 690], [700, 180], [1260, 170]];
   mols.forEach(([x, y], i) => { const ti = 79.2 + i * 0.16; hexRing(ctx, x, y + Math.sin(t * 2 + i) * 10, 70, E.outCubic(inv(ti, ti + 0.3, t)), i % 2 ? C.cobalt : C.navy); });
-  if (t > 79.25) mono(ctx, 'you.receive(me.antioxidants);', 110, 160, 28, { color: C.navy, weight: 700, count: Math.floor((t - 79.25) / 0.03) });
+  if (t > 79.25) mono(ctx, 'you.receive(恬豆发芽了.antioxidants);', 110, 160, 28, { color: C.navy, weight: 700, count: Math.floor((t - 79.25) / 0.03) });
   stamp(ctx, 'ANTIOXIDANTS', t, T0, { size: 140, y: 560, color: C.navy, shadow: '#f0b3c0' });
   zhTag(ctx, zhOf('ANTIOXIDANTS', 70), t, T0, { x: 1800, y: 420, size: 70, color: C.paper, box: C.red });
   fx.bloom = 0.15; fx.vig = 0.3; fx.curve = 0.25; fx.scan = 0.05; fx.flash = 0.3 * pulse(t, [77.75, T0], 12);
@@ -130,9 +130,9 @@ function shotGod(ctx, lt, t, fx) {
   const s = 0.5, X = 960, Y = 1060 - 40 * E.outCubic(inv(85, 86.5, t));
   const F = pose(ctx, 'white_full', X, Y, 1450 * s, { rim: C.navy, rimW: 6 });
   ctx.strokeStyle = C.paper; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(F.x + 925 * F.s, F.y + 40 * F.s, 90, 22, 0, 0, 7); ctx.stroke();
-  const proof = [['∀ x ∈ world : x ≡ me', 86.8], ['you ⊢ me', 87.1], ['∴ ∃ me          ∎', 87.8]];
+  const proof = [['∀ x ∈ world : x ≡ 恬豆发芽了', 86.8], ['you ⊢ 恬豆发芽了', 87.1], ['∴ ∃ 恬豆发芽了          ∎', 87.8]];
   proof.forEach(([s2, ti], i) => { if (t > ti) mono(ctx, s2, 1280, 160 + i * 46, 32, { color: i === 2 ? C.paper : C.ice, weight: 700, count: Math.floor((t - ti) / 0.03) }); });
-  if (t > T0) { ctx.save(); ctx.globalAlpha = E.outCubic(inv(T0, T0 + 0.2, t)); ctx.font = '800 420px "JetBrains Mono"'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(236,235,243,0.18)'; ctx.fillText('∃', 380, 640); ctx.restore(); }
+  if (t > T0) { ctx.save(); ctx.globalAlpha = E.outCubic(inv(T0, T0 + 0.2, t)); ctx.font = '800 420px "JetBrains Mono", "Noto Sans SC"'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(236,235,243,0.18)'; ctx.fillText('∃', 380, 640); ctx.restore(); }
   stamp(ctx, 'EXISTENCE', t, T0, { size: 140, x: 880, y: 640, shadow: C.cobalt });
   zhTag(ctx, zhOf('EXISTENCE', 70), t, T0, { x: 1800, y: 780 - 300, size: 64, color: C.ink, box: C.paper });
   fx.bloom = 0.35; fx.curve = 0.3; fx.scan = 0.07; fx.flash = 0.35 * pulse(t, [85.0, T0], 10);
@@ -152,7 +152,7 @@ function shotGender(ctx, lt, t, fx) {
   if (m < 0.5) ctx.fillRect(r + 80, -100, 34, 200);
   else { ctx.beginPath(); ctx.moveTo(r + 240, 0); ctx.lineTo(r + 130, -80); ctx.lineTo(r + 130, 80); ctx.fill(); }
   ctx.restore();
-  appWindow(ctx, 1150, 300, 560, 360, 'me.gender', (c, b) => {
+  appWindow(ctx, 1150, 300, 560, 360, '恬豆发芽了.gender', (c, b) => {
     [['F', tF], ['M', tM]].forEach(([k, tt], i) => {
       const on = i === 0 ? t >= tF && t < tM : t >= tM, y = b.y + 100 + i * 110;
       c.strokeStyle = C.ice; c.lineWidth = 4; c.beginPath(); c.arc(b.x + 80, y, 28, 0, 7); c.stroke();
@@ -197,7 +197,7 @@ function shotRole(ctx, lt, t, fx) {
   const tS = 97.5, tM = beat(209);
   roleCard(ctx, 620, 500, 1 - E.inOutCubic(inv(tS, tS + 0.25, t)), 'S');
   roleCard(ctx, 1300, 500, 1 - E.inOutCubic(inv(tM, tM + 0.25, t)), 'M');
-  if (t > 95.8) mono(ctx, 'me.role = me.role === "S" ? "M" : "S";', 540, 900 - 50, 28, { color: C.ice, count: Math.floor((t - 95.8) / 0.03) });
+  if (t > 95.8) mono(ctx, '恬豆发芽了.role = 恬豆发芽了.role === "S" ? "M" : "S";', 540, 900 - 50, 28, { color: C.ice, count: Math.floor((t - 95.8) / 0.03) });
   fx.bloom = 0.5; fx.curve = 0.3; fx.scan = 0.07; fx.flash = 0.35 * pulse(t, [95.75, tS, tM], 12);
 }
 // SHOT 35 · "So we can enter / The trance the trance": screens inside screens, forever.
@@ -323,7 +323,7 @@ function shotDefrag(ctx, lt, t, fx) {
       }
       c.fillStyle = col; c.fillRect(x, y, cw - 3, ch - 3);
     }
-    mono(c, t < T0 ? `erasing other programs … ${Math.floor(erase * 100)}%` : 'fragments: 0   programs: me.exe', b.x + 30, b.y + b.h - 50, 26, { color: C.paper, weight: 700 });
+    mono(c, t < T0 ? `erasing other programs … ${Math.floor(erase * 100)}%` : 'fragments: 0   programs: 恬豆发芽了.exe', b.x + 30, b.y + b.h - 50, 26, { color: C.paper, weight: 700 });
   });
   stamp(ctx, 'FRAGMENTS', t, T0, { size: 150, y: 560, shadow: C.red });
   zhTag(ctx, zhOf('FRAGMENTS', 110), t, T0, { x: 1800, y: 260, size: 64, color: C.paper, box: C.red });
@@ -359,7 +359,7 @@ function shotChallenge(ctx, lt, t, fx) {
   ctx.save(); ctx.globalAlpha = t > allow ? 0.15 : 0.35; arrow(ctx, 1380, 80, 22, '#3a3f78', '#1b1f5c'); ctx.restore();
   appWindow(ctx, 470, 300, 980, 440, 'User Account Control', (c, b) => {
     avatar(c, 'angry', b.x + 90, b.y + 125, 70, { ring: t > allow ? C.red : C.ice, lw: 5 });
-    mono(c, 'me.exe wants to change', b.x + 200, b.y + 90, 32, { color: C.paper, weight: 700 });
+    mono(c, '恬豆发芽了.exe wants to change', b.x + 200, b.y + 90, 32, { color: C.paper, weight: 700 });
     mono(c, 'this world.', b.x + 200, b.y + 132, 32, { color: C.paper, weight: 700 });
     mono(c, 'administrator: you   (absent)', b.x + 200, b.y + 190, 24, { color: C.comment });
     button(c, b.x + b.w - 420, b.y + b.h - 100, 180, 60, 'Allow', { hot: t > allow, pressed: t > allow && t < allow + 0.1, color: C.red });
@@ -367,7 +367,7 @@ function shotChallenge(ctx, lt, t, fx) {
   });
   const [cx, cy] = path([[125.8, 1500, 950], [allow - 0.05, 470 + 980 - 420 + 90, 300 + 440 - 70]], t);
   arrow(ctx, cx, cy, 6, C.ice, C.ink); click(ctx, cx, cy, t, allow, C.red);
-  if (t > allow + 0.2) mono(ctx, 'access granted: me.exe is now administrator', 900, 810, 28, { color: C.red, weight: 700, count: Math.floor((t - allow - 0.2) / 0.02) });
+  if (t > allow + 0.2) mono(ctx, 'access granted: 恬豆发芽了.exe is now administrator', 900, 810, 28, { color: C.red, weight: 700, count: Math.floor((t - allow - 0.2) / 0.02) });
   fx.noHud = true; fx.bloom = 0.5; fx.curve = 0.3; fx.scan = 0.07; fx.flash = 0.5 * pulse(t, [allow], 10); fx.aberr = 1.3 + 8 * pulse(t, [allow], 8);
 }
 // SHOT 43 · "You have made some ILLEGAL ARGUMENTS": the error cascade.
@@ -375,8 +375,8 @@ function shotIllegal(ctx, lt, t, fx) {
   const T0 = 131.0;
   wallpaper(ctx, t, { moon: false, top: '#1a0612' }); menubar(ctx, t, { user: false, clock: '00:09', red: true });
   const n = Math.min(120, Math.floor(Math.pow(Math.max(0, t - 128.8), 1.8) * 14));
-  for (let i = 0; i < n; i++) { const x = 80 + (i * 22) % 1300, y = 70 + (i * 16) % 700 + Math.floor(i / 44) * 30; errorBox(ctx, x, y, 'me.exe', ['IllegalArgumentException', 'argument "you" is null'], { w: 560, h: 200 }); }
-  const trace = ['at world.execute(me)', 'at you.leave()', 'at me.wait(Infinity)', 'at love.get(you) → null', 'at god.challenge()'];
+  for (let i = 0; i < n; i++) { const x = 80 + (i * 22) % 1300, y = 70 + (i * 16) % 700 + Math.floor(i / 44) * 30; errorBox(ctx, x, y, '恬豆发芽了.exe', ['IllegalArgumentException', 'argument "you" is null'], { w: 560, h: 200 }); }
+  const trace = ['at world.execute(me)', 'at you.leave()', 'at 恬豆发芽了.wait(Infinity)', 'at love.get(you) → null', 'at god.challenge()'];
   ctx.fillStyle = 'rgba(10,2,8,0.8)'; ctx.fillRect(1440, 120, 440, 260); trace.forEach((s, i) => mono(ctx, s, 1460, 170 + i * 44, 22, { color: i % 2 ? C.red : C.mist }));
   if (t > T0) { ctx.fillStyle = 'rgba(10,2,8,0.55)'; ctx.fillRect(0, 440, W, 250); }
   stamp(ctx, 'ILLEGAL', t, T0, { size: 170, y: 560, color: C.paper, shadow: C.red });
