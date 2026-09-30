@@ -7,7 +7,7 @@ import { C, clamp, tinted } from './lib.js';
 let P = null;
 export const setPoses = p => { P = p; };
 // Body centre (x) in source pixels where it differs from the bbox centre (flowing trains).
-const AX = { white_full: 870, pose_sit: 560, pose_back: 600, pose_hug: 820 };
+const AX = { white_full: 900, pose_sit: 560, pose_back: 600, pose_hug: 820 };
 
 export function poseImg(name) { return P[name].img; }
 export function pose(ctx, name, x, y, h, o = {}) {
