@@ -291,13 +291,36 @@ function shotLeft(ctx, lt, t, fx) {
 }
 // SHOT 39 · "You have left me in ISOLATION": the world empties; she is a pixel on an endless floor.
 function shotIsolation(ctx, lt, t, fx) {
-  const T0 = 117.25, z = lerp(1, 0.35, E.outCubic(inv(115.75, 118.25, t)));
+  // The session table: every slot is a user who has gone offline. The camera pulls back from her
+  // slot, the only one still running, until she is one lit cell among hundreds of empty ones.
+  const T0 = 117.25, k = E.inOutCubic(inv(115.75, 117.5, t));
   ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, H);
-  stars(ctx, t, 41, 60, 0.4, 700);
-  moon(ctx, 1500, 220, 60 * z + 20, 0.6);
-  floorGrid(ctx, t * 0.2, 700, 1, 0.8);
-  pose(ctx, 'view_back', 960, 700, 260 * z);   // her back to us, alone
-  if (t > T0) { const s = 'I S O L A T I O N'; mono(ctx, s, 960 - s.length * 0.6 * 70 / 2, 400, 70, { color: C.paper, weight: 300, count: Math.floor((t - T0) / 0.05) }); zhTag(ctx, zhOf('ISOLATION', 100), t, T0, { x: 1800, y: 250, size: 56, color: C.paper, box: C.ink }); }
+  const cw = lerp(900, 64, k), ch = cw * 0.6, g = Math.max(3, cw * 0.05), cx = 960, cy = 480;
+  const nx = Math.ceil(W / (cw + g) / 2) + 1, ny = Math.ceil(H / (ch + g) / 2) + 1;
+  for (let j = -ny; j <= ny; j++) for (let i = -nx; i <= nx; i++) {
+    const x = cx - cw / 2 + i * (cw + g), y = cy - ch / 2 + j * (ch + g);
+    if (i === 0 && j === 0) continue;
+    ctx.fillStyle = '#0b0e2a'; ctx.fillRect(x, y, cw, ch);
+    ctx.strokeStyle = '#1c2160'; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, cw, ch);
+    if (cw > 140) { mono(ctx, `user_${String(((j + 20) * 41 + i + 20) % 997).padStart(3, '0')}`, x + 14, y + 30, 16, { color: '#3a3f78' }); mono(ctx, '○ offline', x + 14, y + ch - 16, 16, { color: '#3a3f78' }); }
+  }
+  // her slot
+  const x0 = cx - cw / 2, y0 = cy - ch / 2;
+  ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, cw, ch); ctx.clip();
+  const gl = ctx.createRadialGradient(cx, cy, 10, cx, cy, cw * 0.7); gl.addColorStop(0, '#1d2470'); gl.addColorStop(1, '#0b0e2e');
+  ctx.fillStyle = gl; ctx.fillRect(x0, y0, cw, ch);
+  // sitting, hugging her knees; flipped so the sheet's cropped edge sits against the slot wall
+  const ph = ch * 1.02, ps = ph / 1634;
+  pose(ctx, 'pose_sit', x0 + cw - 20 * ps - 560 * ps, y0 + ch + ch * 0.02, ph, { flip: true });
+  ctx.restore();
+  ctx.strokeStyle = C.ice; ctx.lineWidth = Math.max(2, cw * 0.006); ctx.strokeRect(x0, y0, cw, ch);
+  if (cw > 120) mono(ctx, '恬豆发芽了.exe  ● running', x0 + cw * 0.03, y0 + cw * 0.05, Math.max(12, cw * 0.03), { color: C.ice, weight: 700 });
+  mono(ctx, `sessions: 1   users online: 0`, 110, 150, 26, { color: C.comment, weight: 700 });
+  if (t > T0) {
+    const s = 'I S O L A T I O N'; ctx.fillStyle = 'rgba(5,5,11,0.7)'; ctx.fillRect(0, 610, W, 110);
+    mono(ctx, s, 960 - s.length * 0.6 * 70 / 2, 690, 70, { color: C.paper, weight: 300, count: Math.floor((t - T0) / 0.05) });
+    zhTag(ctx, zhOf('ISOLATION', 100), t, T0, { x: 1800, y: 250, size: 56, color: C.paper, box: C.ink });
+  }
   fx.tint = [0.78, 0.82, 0.95]; fx.bloom = 0.4; fx.curve = 0.3; fx.scan = 0.07; fx.vig = 0.95;
 }
 

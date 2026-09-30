@@ -161,7 +161,8 @@ function shotWait(ctx, lt, t, fx) {
     c.fillStyle = '#0b0e2e'; c.fillRect(S.x, S.y, S.w, S.h);
     mono(c, 'waiting for user', S.x + 120, S.y + 150, 30, { color: C.ice, weight: 700 });
     c.save(); c.translate(S.x + 80, S.y + 140); c.rotate(t * 8); for (let i = 0; i < 8; i++) { c.rotate(Math.PI / 4); c.fillStyle = `rgba(169,198,255,${(i + 1) / 8})`; c.fillRect(8, -3, 14, 6); } c.restore();
-    pose(c, 'pose_sit', S.x + S.w - 90, S.y + S.h + 6, S.h * 0.78);   // sitting, waiting
+    // standing in profile, facing the "waiting" line — watching the door you left through
+    pose(c, 'view_side', S.x + S.w - 90, S.y + S.h - 8, S.h * 0.9, { flip: true });
   } });
   if (t > T0) {
     ctx.fillStyle = 'rgba(18,4,12,0.6)'; ctx.fillRect(0, 0, W, H);
@@ -313,9 +314,23 @@ function shotEnd(ctx, lt, t, fx) {
   const off = 207.7;
   const scene = c => {
     c.fillStyle = C.ink; c.fillRect(0, 0, W, H);
-    stars(c, t, 3, 160, 0.9, 700); moon(c, 960, 360, 300, 0.95); floorGrid(c, t * 0.3, 720, 1, 0.9);
-    const mem = Math.sin(Math.PI * clamp(inv(203.3, 205.7, t))) * 0.75;           // one last memory: her smile, in white
-    if (mem > 0.01) { c.save(); c.beginPath(); c.arc(960, 360, 296, 0, 7); c.clip(); c.fillStyle = `rgba(20,24,70,${mem})`; c.fillRect(600, 0, 720, 720); pose(c, 'white_up', 960, 700, 640, { alpha: mem }); c.restore(); }
+    stars(c, t, 3, 160, 0.9, 700); floorGrid(c, t * 0.3, 720, 1, 0.9);
+    // One last memory — her smile, in white, inside the moon — already there when the shot opens,
+    // then deleted band by band from the top (the render() wipe of 0:09 in reverse). Deleted bands
+    // go black, so the moon empties with her: at the end only its outline is left.
+    const er = clamp(inv(203.7, 205.6, t));
+    c.strokeStyle = 'rgba(169,198,255,0.55)'; c.lineWidth = 3; c.beginPath(); c.arc(960, 360, 300, 0, 7); c.stroke();
+    if (er < 1) {
+      c.save(); c.beginPath();
+      for (let y = 40; y < 680; y += 14) if (er < (y - 40) / 640 * 0.8 + hash(y) * 0.2) c.rect(560, y, 800, 14);
+      c.clip();
+      c.beginPath(); c.arc(960, 360, 298, 0, 7); c.clip();
+      moon(c, 960, 360, 300, 0.7);
+      c.fillStyle = 'rgba(20,24,70,0.85)'; c.fillRect(600, 0, 720, 720); pose(c, 'white_up', 960, 700, 640, { alpha: 0.9 });
+      c.restore();
+      if (er > 0) { c.fillStyle = C.paper; c.fillRect(680, 40 + er * 640 - 2, 560, 3); }
+      if (t > 203.7) mono(c, `delete memory/smile.bmp … ${Math.floor(er * 100)}%`, 110, 150, 24, { color: C.comment });
+    } else mono(c, 'delete memory/smile.bmp … done', 110, 150, 24, { color: C.dim });
     if (t > 205.9) {
       const s = 'EXECUTION...', n = Math.min(s.length, Math.floor((t - 205.9) / 0.1) + 1);
       mono(c, s, 960 - s.length * 0.6 * 110 / 2, 900, 110, { color: C.paper, weight: 300, count: n });
@@ -333,7 +348,7 @@ function shotEnd(ctx, lt, t, fx) {
     if (t > off + 0.9) mono(ctx, '> 恬豆发芽了.exe exited with code 0_', 110, 980, 26, { color: C.comment, count: Math.floor((t - off - 0.9) / 0.03) });
     fx.noHud = true;
   }
-  fx.noLyric = true; fx.bloom = 0.6; fx.curve = 0.3; fx.scan = 0.07; fx.vig = 0.9;
+  fx.noLyric = true; fx.bloom = 0.3; fx.curve = 0.3; fx.scan = 0.07; fx.vig = 0.9;
 }
 
 const LY = { x: 104, y: 930 };
