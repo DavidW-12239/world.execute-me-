@@ -1,6 +1,6 @@
 // Act 3 · 1:14–2:13 — chorus 2 (eggplant, tomato, cat, god), verse 3, the leaving, the bridge.
 import { W, H, C, beat, clamp, lerp, inv, E, hash, hash2, rng, onTwos, pulse, canvas, sparkle, focusLines, halftone, stripes, tinted, roundRect } from './lib.js';
-import { mono } from './type.js';
+import { mono, cols } from './type.js';
 import { getA, drawCut, layer, moon, stars, bgGrid, scanBars, vText, arrow, keyVisual, sticker, piece, floorGrid, drawWorld, petals } from './shots.js';
 import {
   RED, TEAL, crisp, blit, sprite, icon, PROGRAMS, deskIcon, wallpaper, menubar, appWindow, button, progress, errorBox,
@@ -53,7 +53,7 @@ export { HEART };
 function label(ctx, x, y, rows, t, t0, title) {
   ctx.fillStyle = C.paper; ctx.fillRect(x, y, 520, 90 + rows.length * 54); ctx.strokeStyle = C.ink; ctx.lineWidth = 6; ctx.strokeRect(x, y, 520, 90 + rows.length * 54);
   mono(ctx, title, x + 24, y + 60, 40, { color: C.ink, weight: 800 }); ctx.fillStyle = C.ink; ctx.fillRect(x + 20, y + 76, 480, 8);
-  rows.forEach(([k, v], i) => { const ti = t0 + i * 0.2; if (t < ti) return; const yy = y + 128 + i * 54; mono(ctx, k, x + 24, yy, 26, { color: C.ink, weight: 700 }); mono(ctx, v, x + 496 - [...v].length * 15.6, yy, 26, { color: C.cobalt, weight: 800, count: Math.floor((t - ti) / 0.03) }); ctx.fillStyle = '#9ea3cf'; ctx.fillRect(x + 20, yy + 16, 480, 2); });
+  rows.forEach(([k, v], i) => { const ti = t0 + i * 0.2; if (t < ti) return; const yy = y + 128 + i * 54; mono(ctx, k, x + 24, yy, 26, { color: C.ink, weight: 700 }); mono(ctx, v, x + 496 - cols(v) * 15.6, yy, 26, { color: C.cobalt, weight: 800, count: Math.floor((t - ti) / 0.03) }); ctx.fillStyle = '#9ea3cf'; ctx.fillRect(x + 20, yy + 16, 480, 2); });
 }
 function bounceY(t, times) { return -40 * pulse(t, times, 9) * Math.sin(Math.min(Math.PI, (t - Math.max(...times.filter(b => b <= t), -9)) * 12)); }
 const beatsIn = (a, b) => { const r = []; for (let k = Math.ceil((a - 0.21) / 0.4615); beat(k) < b; k++) r.push(beat(k)); return r; };
@@ -166,9 +166,15 @@ function shotGender(ctx, lt, t, fx) {
 function shotAmPm(ctx, lt, t, fx) {
   const k = inv(92.0, 95.7, t), day = Math.sin(Math.PI * clamp(k * 1.1));
   roomScene(ctx, t, { day: 0.85 * day, sun: clamp(k * 1.1), glow: 0.2 + 0.2 * (1 - day), screen: (c, S) => {
+    // a day together, logged: one entry per clock hour as the sky turns, her face answering each
     c.fillStyle = '#0b0e2e'; c.fillRect(S.x, S.y, S.w, S.h);
-    for (let i = 0; i < 5; i++) { const tt = 92.0 + i * 0.7; if (t < tt) continue; const R = rng(i + 3); c.fillStyle = [C.cobalt, C.violet, C.ice, C.mist, C.lilac][i]; c.fillRect(S.x + R() * S.w * 0.5, S.y + R() * S.h * 0.5, S.w * 0.45, S.h * 0.45); }
-    blit(c, sprite('white'), S.x + S.w - 60, S.y + S.h - 70, 1.5, { center: true });
+    const DAY = [[92.0, '09:12', 'good morning ☀', 'smile'], [92.7, '12:30', 'lunch, together', 'calm'], [93.4, '15:05', 'one more game?', 'surprised'],
+                 [94.1, '18:40', 'your song again ♪', 'smile'], [94.8, '22:15', 'look — the moon', 'closed']];
+    let cur = DAY[0];
+    DAY.forEach((d, i) => { if (t < d[0]) return; cur = d; const y = S.y + 44 + i * 48, n = Math.floor((t - d[0]) / 0.025);
+      mono(c, d[1], S.x + 22, y, 18, { color: C.comment, weight: 700 }); mono(c, d[2], S.x + 100, y, 18, { color: C.paper, count: n }); });
+    face(c, cur[3], S.x + S.w - 176, S.y + 24, 150, 196, { frame: C.ice });
+    mono(c, '恬豆发芽了', S.x + S.w - 176, S.y + S.h - 22, 18, { color: C.ice, weight: 700 });
   } });
   const hrs = Math.floor(lerp(9, 23.99, k)), min = Math.floor((lerp(9, 23.99, k) % 1) * 60);
   const ampm = hrs < 12 ? 'AM' : 'PM', h12 = ((hrs + 11) % 12) + 1;

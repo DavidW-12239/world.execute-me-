@@ -353,8 +353,13 @@ function shotUnite(ctx, lt, t, fx) {
     ctx.fillStyle = 'rgba(77,94,224,0.8)'; ctx.beginPath(); ctx.arc(960 - d / 2, 500, r, 0, 7); ctx.fill();
     ctx.fillStyle = 'rgba(122,85,240,0.8)'; ctx.beginPath(); ctx.arc(960 + d / 2, 500, r, 0, 7); ctx.fill(); ctx.restore();
     ctx.strokeStyle = C.paper; ctx.lineWidth = 4; for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(960 + s * d / 2, 500, r, 0, 7); ctx.stroke(); }
-    mono(ctx, '恬豆发芽了', 960 - d / 2 - 60 - (d > 100 ? 80 : 0), 520, 56, { color: C.paper, weight: 800 });
-    mono(ctx, 'you', 960 + d / 2 - 40 + (d > 100 ? 60 : 0), 520, 56, { color: C.paper, weight: 800 });
+    // names centred in their own circles; they fade as the circles merge into one
+    const la = 1 - inv(0.35, 0.7, m), cw = 56 * 0.6;
+    ctx.save(); ctx.globalAlpha = la;
+    mono(ctx, '恬豆发芽了', 960 - d / 2 - 10 * cw / 2, 520, 56, { color: C.paper, weight: 800 });
+    mono(ctx, 'you', 960 + d / 2 - 3 * cw / 2, 520, 56, { color: C.paper, weight: 800 });
+    ctx.restore();
+    if (m > 0.6) { ctx.save(); ctx.globalAlpha = inv(0.6, 1, m); mono(ctx, '1', 960 - cw * 1.2, 540, 96, { color: C.navy, weight: 800 }); ctx.restore(); }
     mono(ctx, m < 0.5 ? '恬豆发芽了 ∩ you' : '恬豆发芽了 ∪ you  =  1', 110, 180, 34, { color: C.ice, weight: 800 });
   } else {
     // droste dive through nested rings
@@ -365,13 +370,14 @@ function shotUnite(ctx, lt, t, fx) {
       ctx.strokeStyle = C.paper; ctx.lineWidth = 2; ctx.stroke();
     }
     const pr = 120 + deep * 110;
-    ctx.save(); ctx.beginPath(); ctx.arc(960, 520, pr, 0, 7); ctx.fillStyle = '#c9cadb'; ctx.fill(); ctx.clip();
-    pose(ctx, 'white_up', 960, 520 + pr * 1.12, pr * 2.5); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.arc(960, 520, pr, 0, 7); ctx.fillStyle = '#3a3f8a'; ctx.fill(); ctx.clip();
+    pose(ctx, 'white_up', 960, 520 + pr * 1.12, pr * 2.5, { alpha: 0.92 });
+    ctx.fillStyle = 'rgba(27,31,92,0.22)'; ctx.fillRect(960 - pr, 520 - pr, 2 * pr, 2 * pr); ctx.restore();   // keep her readable against the bloom
     ctx.strokeStyle = C.paper; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(960, 520, pr, 0, 7); ctx.stroke();
     arrow(ctx, 960 + pr * 0.8, 520 + pr * 0.55, 5);
     mono(ctx, `depth ${String(Math.floor(deep * 64)).padStart(2, '0')}`, 110, 180, 34, { color: C.paper, weight: 800 });
   }
-  fx.bloom = 0.6; fx.curve = 0.35; fx.scan = 0.08; fx.aberr = 1.5; fx.flash = 0.35 * pulse(t, [55.25, 57.0, 58.1], 12);
+  fx.bloom = deep > 0 ? 0.25 : 0.5; fx.curve = 0.35; fx.scan = 0.08; fx.aberr = 1.5; fx.flash = 0.35 * pulse(t, [55.25, 57.0, 58.1], 12);
 }
 
 // ---------------------------------------------------------------------------
